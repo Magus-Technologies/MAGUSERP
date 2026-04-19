@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 import { Drawer } from 'expo-router/drawer';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { router } from 'expo-router';
-import { useAuth } from '../../src/store/AuthContext';
-import { DrawerContent } from '../../src/components/navigation/DrawerContent';
+import { useAuth } from '@/src/store/AuthContext';
+import { DrawerContent } from '@/src/components/navigation/DrawerContent';
 
 export default function AppLayout() {
   const { isAuthenticated, isLoading } = useAuth();

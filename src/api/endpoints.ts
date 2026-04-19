@@ -16,6 +16,11 @@ export const ENDPOINTS = {
   MARCAS:     '/marcas',
   SECCIONES:  '/secciones',
 
+  // Dashboard
+  DASHBOARD_STATS:      '/dashboard/estadisticas',
+  DASHBOARD_MENSUALES:  '/dashboard/ventas-mensuales',
+  DASHBOARD_CATEGORIAS: '/dashboard/categorias-vendidas',
+
   // Facturación
   VENTAS: '/ventas',
 } as const;

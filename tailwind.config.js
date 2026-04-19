@@ -44,6 +44,9 @@ module.exports = {
           500: '#3B82F6',
           600: '#2563EB',
         },
+        azul: {
+          oscuro: '#164a77',
+        },
         neutral: {
           DEFAULT: '#121535',
           30:  '#F2F5FA',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { View, TouchableOpacity, ScrollView } from 'react-native';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -87,12 +87,7 @@ export function DrawerContent({ navigation }: DrawerContentComponentProps) {
   return (
     <View className="flex-1 bg-white">
       {/* Header */}
-      <View className="bg-neutral px-4 pt-14 pb-6">
-        <Image
-          source={require('../../../assets/images/logo-white.png')}
-          className="w-32 h-10 mb-4"
-          resizeMode="contain"
-        />
+      <View className="bg-azul-oscuro px-4 pt-14 pb-6">
         <View className="flex-row items-center">
           <View className="w-10 h-10 rounded-full bg-primary-500 items-center justify-center">
             <Text color="white" className="font-bold text-base">

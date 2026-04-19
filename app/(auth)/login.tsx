@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import {
-  View, Image, KeyboardAvoidingView,
-  Platform, ScrollView, Alert,
-} from 'react-native';
+import { View, Image, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { router } from 'expo-router';
-import { useAuth } from '../../src/store/AuthContext';
-import { Text }   from '../../src/components/ui/Text';
-import { Input }  from '../../src/components/ui/Input';
-import { Button } from '../../src/components/ui/Button';
+import { useAuth } from '@/src/store/AuthContext';
+import { Text }   from '@/src/components/ui/Text';
+import { Input }  from '@/src/components/ui/Input';
+import { Button } from '@/src/components/ui/Button';
 
 export default function LoginScreen() {
   const { login } = useAuth();
@@ -39,7 +36,7 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      className="flex-1 bg-neutral"
+      className="flex-1 bg-gray-50"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -47,24 +44,22 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        {/* Header azul con logo */}
-        <View className="items-center justify-center pt-20 pb-12 bg-neutral">
+        {/* Header con logo */}
+        <View className="bg-neutral items-center justify-center pt-16 pb-10">
           <Image
-            source={require('../../assets/images/logo-white.png')}
-            className="w-40 h-16"
+            source={require('@/assets/images/logo3.png')}
+            style={{ width: 180, height: 60 }}
             resizeMode="contain"
           />
-          <Text variant="h3" color="white" className="mt-4">Panel de Administración</Text>
-          <Text variant="bodySmall" className="text-white/60 mt-1">Ingresa tus credenciales para continuar</Text>
         </View>
 
-        {/* Formulario */}
-        <View className="flex-1 bg-white rounded-t-3xl px-6 pt-10 pb-8">
-          <Text variant="h4" className="mb-6">Iniciar Sesión</Text>
+        {/* Card formulario */}
+        <View className="flex-1 bg-white rounded-t-3xl px-6 pt-10 pb-10">
+          <Text variant="h3" className="text-center mb-8">Iniciar Sesión</Text>
 
           <Input
             label="Correo electrónico"
-            placeholder="usuario@magus.com"
+            placeholder="Ingresa tu correo electrónico"
             leftIcon="mail-outline"
             keyboardType="email-address"
             autoCapitalize="none"
@@ -75,7 +70,7 @@ export default function LoginScreen() {
 
           <Input
             label="Contraseña"
-            placeholder="••••••••"
+            placeholder="Ingresa tu contraseña"
             leftIcon="lock-closed-outline"
             secureTextEntry
             value={password}
@@ -83,11 +78,11 @@ export default function LoginScreen() {
             error={errors.password}
           />
 
-          <Button onPress={handleLogin} loading={loading} fullWidth size="lg" variant="primary">
-            Ingresar
+          <Button onPress={handleLogin} loading={loading} fullWidth size="lg">
+            Iniciar Sesión
           </Button>
 
-          <Text variant="caption" color="muted" className="text-center mt-6">
+          <Text variant="caption" color="muted" className="text-center mt-8">
             MagusERP v1.0.0
           </Text>
         </View>
