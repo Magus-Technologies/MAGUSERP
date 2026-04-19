@@ -16,7 +16,7 @@ export function useMarcas() {
     setError(null);
     try {
       const data = await marcaService.getAll();
-      const list = Array.isArray(data) ? data : (data as any).data ?? [];
+      const list: Marca[] = Array.isArray(data) ? data : Array.isArray((data as any)?.data) ? (data as any).data : [];
       setMarcas(list);
       setFiltered(list);
     } catch (e: any) {
@@ -58,6 +58,8 @@ export function useMarcas() {
     try {
       await marcaService.delete(id);
       await load();
+    } catch (e) {
+      throw e;
     } finally {
       setDeleting(false);
     }

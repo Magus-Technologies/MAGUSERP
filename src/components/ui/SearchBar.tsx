@@ -10,7 +10,7 @@ interface Props {
 
 export function SearchBar({ value, onChangeText, placeholder = 'Buscar...' }: Props) {
   return (
-    <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-3 h-11 mx-4 mb-3">
+    <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-3 h-11 mx-4 mt-3 mb-3">
       <Ionicons name="search-outline" size={18} color="#9ca3af" />
       <TextInput
         className="flex-1 ml-2 text-sm text-gray-800"

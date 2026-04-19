@@ -10,8 +10,7 @@ import { useMarcas }       from '@/src/hooks/useMarcas';
 import { Producto }        from '@/src/types/almacen.types';
 import { SearchBar }       from '@/src/components/ui/SearchBar';
 import { FAB }             from '@/src/components/ui/FAB';
-import { ConfirmModal }    from '@/src/components/ui/ConfirmModal';
-import { FormModal }       from '@/src/components/ui/FormModal';
+import { ActionModal }     from '@/src/components/ui/ActionModal';
 import { Input }           from '@/src/components/ui/Input';
 import { LoadingSpinner }  from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }      from '@/src/components/ui/EmptyState';
@@ -49,7 +48,7 @@ export default function ProductosScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
+      <View className="bg-azul-oscuro px-4 pt-10 pb-3 flex-row items-center">
         <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
           <Ionicons name="menu" size={26} color="#fff" />
         </TouchableOpacity>
@@ -85,11 +84,12 @@ export default function ProductosScreen() {
 
       <FAB onPress={openCreate} />
 
-      <FormModal
+      <ActionModal
         visible={formVisible}
+        action={form.editing ? 'edit' : 'create'}
         title={form.editing ? 'Editar Producto' : 'Nuevo Producto'}
-        onClose={() => setFormVisible(false)}
-        onSave={handleSave}
+        onConfirm={handleSave}
+        onCancel={() => setFormVisible(false)}
         loading={form.saving}
       >
         <Input
@@ -100,9 +100,16 @@ export default function ProductosScreen() {
           leftIcon="cube-outline"
         />
         <Input
+          label="Código *"
+          value={form.form.codigo_producto}
+          onChangeText={v => form.setField('codigo_producto', v)}
+          placeholder="Ej: PROD-001"
+          leftIcon="barcode-outline"
+        />
+        <Input
           label="Precio de venta *"
-          value={form.form.precio ? String(form.form.precio) : ''}
-          onChangeText={v => form.setField('precio', v)}
+          value={form.form.precio_venta ? String(form.form.precio_venta) : ''}
+          onChangeText={v => form.setField('precio_venta', v)}
           placeholder="0.00"
           leftIcon="cash-outline"
           keyboardType="decimal-pad"
@@ -184,10 +191,11 @@ export default function ProductosScreen() {
         />
 
         {form.error ? <Text variant="caption" color="error" className="mb-3">{form.error}</Text> : null}
-      </FormModal>
+      </ActionModal>
 
-      <ConfirmModal
+      <ActionModal
         visible={confirmVisible}
+        action="delete"
         title="Eliminar Producto"
         message={`¿Estás seguro de eliminar "${toDelete?.nombre}"?`}
         onConfirm={handleDelete}

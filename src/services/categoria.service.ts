@@ -1,16 +1,23 @@
 import { apiClient } from '../api/client';
 import { Categoria } from '../types/almacen.types';
 
+export interface CategoriaPayload {
+  nombre:      string;
+  descripcion: string | null;
+  id_seccion:  number;
+  activo:      boolean;
+}
+
 export const categoriaService = {
   getAll(): Promise<Categoria[]> {
     return apiClient.get('/categorias');
   },
 
-  create(data: Pick<Categoria, 'nombre' | 'descripcion'>): Promise<Categoria> {
+  create(data: CategoriaPayload): Promise<Categoria> {
     return apiClient.post('/categorias', data);
   },
 
-  update(id: number, data: Pick<Categoria, 'nombre' | 'descripcion'>): Promise<Categoria> {
+  update(id: number, data: CategoriaPayload): Promise<Categoria> {
     return apiClient.put(`/categorias/${id}`, data);
   },
 

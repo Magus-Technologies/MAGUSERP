@@ -9,14 +9,16 @@ export interface ProductoFilters {
 }
 
 export interface ProductoPayload {
-  nombre:        string;
-  descripcion:   string | null;
-  precio:        number;
-  precio_compra: number;
-  stock:         number;
-  stock_minimo:  number;
-  categoria_id:  number;
-  marca_id:      number | null;
+  nombre:          string;
+  descripcion:     string | null;
+  codigo_producto: string;
+  precio_venta:    number;
+  precio_compra:   number;
+  stock:           number;
+  stock_minimo:    number;
+  categoria_id:    number;
+  marca_id:        number | null;
+  activo:          boolean;
 }
 
 export const productoService = {

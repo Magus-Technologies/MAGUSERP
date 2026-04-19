@@ -3,8 +3,9 @@ import { productoService, ProductoPayload } from '../services/producto.service';
 import { Producto } from '../types/almacen.types';
 
 const EMPTY: ProductoPayload = {
-  nombre: '', descripcion: null, precio: 0, precio_compra: 0,
-  stock: 0, stock_minimo: 5, categoria_id: 0, marca_id: null,
+  nombre: '', descripcion: null, codigo_producto: '',
+  precio_venta: 0, precio_compra: 0,
+  stock: 0, stock_minimo: 5, categoria_id: 0, marca_id: null, activo: true,
 };
 
 export function useProductoForm(onSuccess: () => void) {
@@ -16,14 +17,16 @@ export function useProductoForm(onSuccess: () => void) {
   const open = (producto?: Producto) => {
     setEditing(producto ?? null);
     setForm(producto ? {
-      nombre:        producto.nombre,
-      descripcion:   producto.descripcion,
-      precio:        producto.precio,
-      precio_compra: producto.precio_compra,
-      stock:         producto.stock,
-      stock_minimo:  producto.stock_minimo,
-      categoria_id:  producto.categoria_id,
-      marca_id:      producto.marca_id,
+      nombre:          producto.nombre,
+      descripcion:     producto.descripcion,
+      codigo_producto: (producto as any).codigo_producto ?? '',
+      precio_venta:    producto.precio_venta ?? producto.precio,
+      precio_compra:   producto.precio_compra,
+      stock:           producto.stock,
+      stock_minimo:    producto.stock_minimo,
+      categoria_id:    producto.categoria_id,
+      marca_id:        producto.marca_id,
+      activo:          (producto as any).activo ?? true,
     } : EMPTY);
     setError('');
   };
@@ -40,9 +43,9 @@ export function useProductoForm(onSuccess: () => void) {
   };
 
   const validate = (): string => {
-    if (!form.nombre.trim())  return 'El nombre es requerido';
-    if (!form.categoria_id)   return 'Selecciona una categoría';
-    if (Number(form.precio) <= 0) return 'El precio debe ser mayor a 0';
+    if (!form.nombre.trim())         return 'El nombre es requerido';
+    if (!form.categoria_id)          return 'Selecciona una categoría';
+    if (Number(form.precio_venta) <= 0) return 'El precio debe ser mayor a 0';
     return '';
   };
 
@@ -55,7 +58,7 @@ export function useProductoForm(onSuccess: () => void) {
       const payload: ProductoPayload = {
         ...form,
         nombre:        form.nombre.trim(),
-        precio:        Number(form.precio),
+        precio_venta:  Number(form.precio_venta),
         precio_compra: Number(form.precio_compra),
         stock:         Number(form.stock),
         stock_minimo:  Number(form.stock_minimo),

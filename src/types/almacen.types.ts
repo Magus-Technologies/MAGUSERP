@@ -2,6 +2,8 @@ export interface Categoria {
   id:          number;
   nombre:      string;
   descripcion: string | null;
+  id_seccion?: number;
+  activo?:     boolean;
   created_at?: string;
 }
 

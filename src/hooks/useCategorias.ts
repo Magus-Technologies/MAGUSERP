@@ -16,7 +16,7 @@ export function useCategorias() {
     setError(null);
     try {
       const data = await categoriaService.getAll();
-      const list = Array.isArray(data) ? data : (data as any).data ?? [];
+      const list: Categoria[] = Array.isArray(data) ? data : Array.isArray((data as any)?.data) ? (data as any).data : [];
       setCategorias(list);
       setFiltered(list);
     } catch (e: any) {
@@ -36,7 +36,7 @@ export function useCategorias() {
   const create = async (nombre: string, descripcion: string | null) => {
     setSaving(true);
     try {
-      await categoriaService.create({ nombre, descripcion });
+      await categoriaService.create({ nombre, descripcion, id_seccion: 1, activo: true });
       await load();
     } finally {
       setSaving(false);
@@ -46,7 +46,13 @@ export function useCategorias() {
   const update = async (id: number, nombre: string, descripcion: string | null) => {
     setSaving(true);
     try {
-      await categoriaService.update(id, { nombre, descripcion });
+      const existing = categorias.find(c => c.id === id);
+      await categoriaService.update(id, {
+        nombre,
+        descripcion,
+        id_seccion: existing?.id_seccion ?? 1,
+        activo:     existing?.activo ?? true,
+      });
       await load();
     } finally {
       setSaving(false);
@@ -58,6 +64,8 @@ export function useCategorias() {
     try {
       await categoriaService.delete(id);
       await load();
+    } catch (e) {
+      throw e;
     } finally {
       setDeleting(false);
     }

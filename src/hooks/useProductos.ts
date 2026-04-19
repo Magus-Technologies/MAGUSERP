@@ -13,14 +13,21 @@ export function useProductos() {
   const [deleting,    setDeleting]    = useState(false);
   const [error,       setError]       = useState<string | null>(null);
 
-  const searchRef = useRef(search);
+  const searchRef  = useRef(search);
   searchRef.current = search;
+  const mountedRef = useRef(false);
 
   const load = useCallback(async (q: string, p: number, append = false) => {
     if (p === 1) setLoading(true); else setLoadingMore(true);
     setError(null);
     try {
       const raw: any = await productoService.getAll({ search: q || undefined, page: p });
+
+      if (!raw) {
+        // Parse falló — no limpiar la lista existente
+        setError('Error al cargar productos, intenta de nuevo');
+        return;
+      }
 
       const list: Producto[] = Array.isArray(raw?.data) ? raw.data : [];
       const lp  = raw?.last_page ?? 1;
@@ -40,6 +47,7 @@ export function useProductos() {
   useEffect(() => { load('', 1); }, [load]);
 
   useEffect(() => {
+    if (!mountedRef.current) { mountedRef.current = true; return; }
     const timer = setTimeout(() => {
       setPage(1);
       load(search, 1);
