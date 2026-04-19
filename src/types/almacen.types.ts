@@ -17,12 +17,14 @@ export interface Producto {
   nombre:           string;
   descripcion:      string | null;
   precio:           number;
+  precio_venta?:    number;
   precio_compra:    number;
   stock:            number;
   stock_minimo:     number;
   categoria_id:     number;
   marca_id:         number | null;
   imagen_principal: string | null;
+  imagen_url?:      string | null;
   categoria?:       { id: number; nombre: string };
   marca?:           { id: number; nombre: string } | null;
 }

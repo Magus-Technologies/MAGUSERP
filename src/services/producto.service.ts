@@ -27,7 +27,7 @@ export const productoService = {
     if (filters.marca_id)     params.set('marca_id',     String(filters.marca_id));
     if (filters.page)         params.set('page',         String(filters.page));
     const qs = params.toString();
-    return apiClient.get(`/productos${qs ? `?${qs}` : ''}`);
+    return apiClient.get(`/productos/listar${qs ? `?${qs}` : ''}`);
   },
 
   create(data: ProductoPayload): Promise<Producto> {

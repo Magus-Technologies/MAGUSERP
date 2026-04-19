@@ -20,30 +20,11 @@ export function useProductos() {
     if (p === 1) setLoading(true); else setLoadingMore(true);
     setError(null);
     try {
-      const raw = await productoService.getAll({ search: q || undefined, page: p });
-      console.log('[useProductos] tipo:', typeof raw, '| isArray:', Array.isArray(raw), '| keys(5):', Object.keys(raw as any).slice(0, 5));
+      const raw: any = await productoService.getAll({ search: q || undefined, page: p });
 
-      let list: Producto[];
-      let lp  = 1;
-      let tot = 0;
-
-      if (Array.isArray(raw)) {
-        // Array plano
-        list = raw;
-      } else if (raw && Array.isArray((raw as any).data)) {
-        // Paginado { data: [], last_page, total }
-        list = (raw as any).data;
-        lp   = (raw as any).last_page ?? 1;
-        tot  = (raw as any).total ?? list.length;
-      } else if (raw && typeof raw === 'object') {
-        // Objeto con IDs como claves: { "123": {...}, "124": {...} }
-        list = Object.values(raw as unknown as Record<string, Producto>);
-      } else {
-        list = [];
-      }
-
-      tot = tot || list.length;
-      console.log('[useProductos] items:', list.length, '| lastPage:', lp, '| total:', tot);
+      const list: Producto[] = Array.isArray(raw?.data) ? raw.data : [];
+      const lp  = raw?.last_page ?? 1;
+      const tot = raw?.total ?? list.length;
       setProductos(prev => append ? [...prev, ...list] : list);
       setLastPage(lp);
       setTotal(tot);

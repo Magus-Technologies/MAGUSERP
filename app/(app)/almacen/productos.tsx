@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
@@ -8,23 +8,15 @@ import { useProductoForm } from '@/src/hooks/useProductoForm';
 import { useCategorias }   from '@/src/hooks/useCategorias';
 import { useMarcas }       from '@/src/hooks/useMarcas';
 import { Producto }        from '@/src/types/almacen.types';
-import { formatCurrency }  from '@/src/utils/formatters';
 import { SearchBar }       from '@/src/components/ui/SearchBar';
 import { FAB }             from '@/src/components/ui/FAB';
 import { ConfirmModal }    from '@/src/components/ui/ConfirmModal';
 import { FormModal }       from '@/src/components/ui/FormModal';
-import { Card }            from '@/src/components/ui/Card';
-import { Badge }           from '@/src/components/ui/Badge';
 import { Input }           from '@/src/components/ui/Input';
 import { LoadingSpinner }  from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }      from '@/src/components/ui/EmptyState';
 import { Text }            from '@/src/components/ui/Text';
-
-function stockBadge(p: Producto) {
-  if (p.stock === 0)             return <Badge label="Sin stock" variant="error" />;
-  if (p.stock <= p.stock_minimo) return <Badge label="Crítico"   variant="warning" />;
-  return                                <Badge label="OK"         variant="success" />;
-}
+import { ProductoCard }    from '@/src/components/cards/ProductoCard';
 
 export default function ProductosScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -73,7 +65,7 @@ export default function ProductosScreen() {
       <FlatList
         data={list.productos}
         keyExtractor={item => String(item.id)}
-        contentContainerStyle={{ padding: 16, paddingTop: 0, paddingBottom: 80 }}
+        contentContainerStyle={{ paddingTop: 8, paddingBottom: 80 }}
         onEndReached={list.loadMore}
         onEndReachedThreshold={0.3}
         ListFooterComponent={list.loadingMore ? <LoadingSpinner message="" /> : null}
@@ -84,51 +76,10 @@ export default function ProductosScreen() {
             message={list.search ? 'No hay resultados para tu búsqueda' : 'Crea el primer producto'}
           />
         }
+        numColumns={2}
+        columnWrapperStyle={{ paddingHorizontal: 16 }}
         renderItem={({ item }) => (
-          <Card className="mb-3 px-4 py-3">
-            <View className="flex-row items-center">
-              <View className="w-14 h-14 bg-gray-100 rounded-xl overflow-hidden mr-3">
-                {item.imagen_principal ? (
-                  <Image source={{ uri: item.imagen_principal }} className="w-full h-full" resizeMode="cover" />
-                ) : (
-                  <View className="w-full h-full items-center justify-center">
-                    <Ionicons name="cube-outline" size={22} color="#9ca3af" />
-                  </View>
-                )}
-              </View>
-
-              <View className="flex-1">
-                <Text variant="label" numberOfLines={1}>{item.nombre}</Text>
-                <Text variant="caption" color="muted" className="mt-0.5">
-                  {item.categoria?.nombre ?? '—'}{item.marca ? ` · ${item.marca.nombre}` : ''}
-                </Text>
-                <View className="flex-row items-center gap-2 mt-1">
-                  <Text variant="caption" className="text-primary-500 font-semibold">
-                    {formatCurrency(item.precio)}
-                  </Text>
-                  <Text variant="caption" color="muted">Stock: {item.stock}</Text>
-                </View>
-              </View>
-
-              <View className="items-end gap-2">
-                {stockBadge(item)}
-                <View className="flex-row gap-1 mt-1">
-                  <TouchableOpacity
-                    onPress={() => openEdit(item)}
-                    className="w-8 h-8 rounded-lg bg-blue-50 items-center justify-center"
-                  >
-                    <Ionicons name="pencil-outline" size={15} color="#458EFF" />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => openDelete(item)}
-                    className="w-8 h-8 rounded-lg bg-red-50 items-center justify-center"
-                  >
-                    <Ionicons name="trash-outline" size={15} color="#EF4444" />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Card>
+          <ProductoCard item={item} onEdit={openEdit} onDelete={openDelete} />
         )}
       />
 

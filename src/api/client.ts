@@ -31,10 +31,30 @@ async function request<T>(
       : undefined,
   });
 
-  const text = await res.text();
-  console.log(`[apiClient] status: ${res.status} | body(200): ${text.slice(0, 200)}`);
+  console.log(`[apiClient] status: ${res.status} | content-type: ${res.headers.get('content-type')}`);
   let data: unknown;
-  try { data = JSON.parse(text); } catch { data = text; }
+  let rawText = '';
+  try {
+    rawText = await res.text();
+    console.log(`[apiClient] body length: ${rawText.length} | first 100: ${rawText.slice(0, 100)}`);
+    console.log(`[apiClient] last 100: ${rawText.slice(-100)}`);
+    // Buscar si hay caracteres no-JSON inesperados
+    const match = rawText.match(/[\x00-\x08\x0b\x0c\x0e-\x1f]/);
+    if (match) {
+      console.warn(`[apiClient] control char found at index ${rawText.indexOf(match[0])}: 0x${match[0].charCodeAt(0).toString(16)}`);
+    }
+    data = JSON.parse(rawText);
+  } catch (e) {
+    console.warn('[apiClient] parse failed:', (e as Error).message);
+    // Buscar la posición aproximada del error en el texto
+    const errMsg = (e as Error).message;
+    const posMatch = errMsg.match(/position (\d+)/i) || errMsg.match(/(\d+)/);
+    if (posMatch) {
+      const pos = parseInt(posMatch[1], 10);
+      console.warn(`[apiClient] around error pos ${pos}: ${JSON.stringify(rawText.slice(Math.max(0, pos - 30), pos + 30))}`);
+    }
+    data = null;
+  }
 
   if (res.status === 401) {
     await storage.remove(StorageKeys.AUTH_TOKEN);
