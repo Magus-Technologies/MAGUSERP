@@ -7,10 +7,9 @@ import { useCategorias }  from '@/src/hooks/useCategorias';
 import { Categoria }      from '@/src/types/almacen.types';
 import { SearchBar }      from '@/src/components/ui/SearchBar';
 import { FAB }            from '@/src/components/ui/FAB';
-import { RowItem }        from '@/src/components/ui/RowItem';
+import { EntityCard }     from '@/src/components/cards/EntityCard';
 import { ConfirmModal }   from '@/src/components/ui/ConfirmModal';
 import { FormModal }      from '@/src/components/ui/FormModal';
-import { Card }           from '@/src/components/ui/Card';
 import { Input }          from '@/src/components/ui/Input';
 import { LoadingSpinner } from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }     from '@/src/components/ui/EmptyState';
@@ -77,7 +76,9 @@ export default function CategoriasScreen() {
       <FlatList
         data={filtered}
         keyExtractor={item => String(item.id)}
-        contentContainerStyle={{ padding: 16, paddingTop: 0 }}
+        contentContainerStyle={{ paddingTop: 8, paddingBottom: 80 }}
+        numColumns={2}
+        columnWrapperStyle={{ paddingHorizontal: 16 }}
         ListEmptyComponent={
           <EmptyState
             icon="grid-outline"
@@ -85,17 +86,14 @@ export default function CategoriasScreen() {
             message={search ? 'No hay resultados para tu búsqueda' : 'Crea la primera categoría'}
           />
         }
-        renderItem={({ item, index }) => (
-          <Card className="px-4 py-0 mb-0">
-            <RowItem
-              title={item.nombre}
-              subtitle={item.descripcion ?? undefined}
-              icon="grid-outline"
-              onEdit={() => openEdit(item)}
-              onDelete={() => openDelete(item)}
-              last={index === filtered.length - 1}
-            />
-          </Card>
+        renderItem={({ item }) => (
+          <EntityCard
+            title={item.nombre}
+            subtitle={item.descripcion}
+            icon="grid-outline"
+            onEdit={() => openEdit(item)}
+            onDelete={() => openDelete(item)}
+          />
         )}
       />
 
