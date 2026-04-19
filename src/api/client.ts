@@ -22,6 +22,7 @@ async function request<T>(
   if (token) headers.Authorization = `Bearer ${token}`;
   if (!isFormData) headers['Content-Type'] = 'application/json';
 
+  console.log(`[apiClient] ${method} ${API_BASE}${path}`);
   const res = await fetch(`${API_BASE}${path}`, {
     method,
     headers,
@@ -31,6 +32,7 @@ async function request<T>(
   });
 
   const text = await res.text();
+  console.log(`[apiClient] status: ${res.status} | body(200): ${text.slice(0, 200)}`);
   let data: unknown;
   try { data = JSON.parse(text); } catch { data = text; }
 
