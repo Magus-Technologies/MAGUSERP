@@ -1,6 +1,6 @@
 const BASE = __DEV__
   ? 'http://10.0.2.2:8000/api'
-  : 'https://tu-dominio.com/api';
+  : 'https://magus-ecommerce.com/ecommerce-back/public/api';
 
 export const API_BASE = BASE;
 
