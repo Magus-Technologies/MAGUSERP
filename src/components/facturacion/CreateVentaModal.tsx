@@ -11,6 +11,7 @@ import { Text }   from '../ui/Text';
 import { Input }  from '../ui/Input';
 import { Button } from '../ui/Button';
 import { Card }   from '../ui/Card';
+import { SelectGroup } from '../ui/SelectGroup';
 
 interface Props {
   visible:   boolean;
@@ -90,19 +91,12 @@ export function CreateVentaModal({ visible, onClose, onSuccess }: Props) {
                 <Text variant="label" className="mb-3">Cliente</Text>
 
                 {/* Tipo documento */}
-                <View className="flex-row gap-2 mb-3">
-                  {TIPO_DOC.map(t => (
-                    <TouchableOpacity
-                      key={t.key}
-                      onPress={() => form.setClienteData(prev => ({ ...prev, tipo_documento: t.key }))}
-                      className={`px-3 py-1.5 rounded-full border ${form.clienteData.tipo_documento === t.key ? 'bg-azul-oscuro border-azul-oscuro' : 'bg-white border-gray-200'}`}
-                    >
-                      <Text variant="caption" className={form.clienteData.tipo_documento === t.key ? 'text-white' : 'text-gray-600'}>
-                        {t.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                <SelectGroup
+                  label="Tipo Documento"
+                  options={TIPO_DOC.map(t => ({ id: t.key, nombre: t.label }))}
+                  selectedId={form.clienteData.tipo_documento}
+                  onSelect={id => form.setClienteData(prev => ({ ...prev, tipo_documento: id }))}
+                />
 
                 {/* Nro documento + buscar */}
                 <View className="flex-row items-end gap-2 mb-2">
@@ -243,18 +237,12 @@ export function CreateVentaModal({ visible, onClose, onSuccess }: Props) {
 
               {/* ── MÉTODO DE PAGO ── */}
               <Card className="p-4">
-                <Text variant="label" className="mb-3">Método de Pago</Text>
-                <View className="flex-row flex-wrap gap-2">
-                  {METODOS_PAGO.map(m => (
-                    <TouchableOpacity
-                      key={m}
-                      onPress={() => form.setMetodoPago(m)}
-                      className={`px-3 py-1.5 rounded-full border ${form.metodoPago === m ? 'bg-azul-oscuro border-azul-oscuro' : 'bg-white border-gray-200'}`}
-                    >
-                      <Text variant="caption" className={form.metodoPago === m ? 'text-white' : 'text-gray-600'}>{m}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                <SelectGroup
+                  label="Método de Pago"
+                  options={METODOS_PAGO.map(m => ({ id: m, nombre: m }))}
+                  selectedId={form.metodoPago}
+                  onSelect={m => form.setMetodoPago(m)}
+                />
               </Card>
 
               {/* ── OPCIONES ── */}

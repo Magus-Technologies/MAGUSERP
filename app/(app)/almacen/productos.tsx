@@ -16,6 +16,7 @@ import { LoadingSpinner }  from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }      from '@/src/components/ui/EmptyState';
 import { Text }            from '@/src/components/ui/Text';
 import { ProductoCard }    from '@/src/components/cards/ProductoCard';
+import { SelectGroup }     from '@/src/components/ui/SelectGroup';
 
 export default function ProductosScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -143,43 +144,22 @@ export default function ProductosScreen() {
           </View>
         </View>
 
-        <Text variant="label" className="mb-1">Categoría *</Text>
-        <View className="flex-row flex-wrap gap-2 mb-4">
-          {categorias.map(c => (
-            <TouchableOpacity
-              key={c.id}
-              onPress={() => form.setField('categoria_id', c.id)}
-              className={`px-3 py-1.5 rounded-lg border ${form.form.categoria_id === c.id ? 'bg-primary-500 border-primary-500' : 'bg-white border-gray-200'}`}
-            >
-              <Text className={`text-xs font-medium ${form.form.categoria_id === c.id ? 'text-white' : 'text-gray-700'}`}>
-                {c.nombre}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <SelectGroup
+          label="Categoría"
+          options={categorias}
+          selectedId={form.form.categoria_id}
+          onSelect={id => form.setField('categoria_id', id)}
+          required
+        />
 
-        <Text variant="label" className="mb-1">Marca</Text>
-        <View className="flex-row flex-wrap gap-2 mb-4">
-          <TouchableOpacity
-            onPress={() => form.setField('marca_id', null)}
-            className={`px-3 py-1.5 rounded-lg border ${form.form.marca_id === null ? 'bg-gray-700 border-gray-700' : 'bg-white border-gray-200'}`}
-          >
-            <Text className={`text-xs font-medium ${form.form.marca_id === null ? 'text-white' : 'text-gray-700'}`}>
-              Sin marca
-            </Text>
-          </TouchableOpacity>
-          {marcas.map(m => (
-            <TouchableOpacity
-              key={m.id}
-              onPress={() => form.setField('marca_id', m.id)}
-              className={`px-3 py-1.5 rounded-lg border ${form.form.marca_id === m.id ? 'bg-primary-500 border-primary-500' : 'bg-white border-gray-200'}`}
-            >
-              <Text className={`text-xs font-medium ${form.form.marca_id === m.id ? 'text-white' : 'text-gray-700'}`}>
-                {m.nombre}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        <SelectGroup
+          label="Marca"
+          options={marcas}
+          selectedId={form.form.marca_id}
+          onSelect={id => form.setField('marca_id', id)}
+          allowNull
+          nullLabel="Sin marca"
+        />
 
         <Input
           label="Descripción"
@@ -189,6 +169,16 @@ export default function ProductosScreen() {
           leftIcon="document-text-outline"
           multiline
         />
+
+        <TouchableOpacity
+          onPress={() => form.setField('activo', !form.form.activo)}
+          className="flex-row items-center gap-2 mt-2 mb-4"
+        >
+          <View className={`w-5 h-5 rounded border-2 items-center justify-center ${form.form.activo ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}>
+            {form.form.activo && <Ionicons name="checkmark" size={12} color="#fff" />}
+          </View>
+          <Text variant="bodySmall">Activo</Text>
+        </TouchableOpacity>
 
         {form.error ? <Text variant="caption" color="error" className="mb-3">{form.error}</Text> : null}
       </ActionModal>

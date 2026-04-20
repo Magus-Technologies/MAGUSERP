@@ -6,11 +6,11 @@ export const marcaService = {
     return apiClient.get('/marcas');
   },
 
-  create(data: Pick<Marca, 'nombre' | 'descripcion'>): Promise<Marca> {
+  create(data: Pick<Marca, 'nombre' | 'descripcion' | 'activo'>): Promise<Marca> {
     return apiClient.post('/marcas', data);
   },
 
-  update(id: number, data: Pick<Marca, 'nombre' | 'descripcion'>): Promise<Marca> {
+  update(id: number, data: Pick<Marca, 'nombre' | 'descripcion' | 'activo'>): Promise<Marca> {
     return apiClient.put(`/marcas/${id}`, data);
   },
 

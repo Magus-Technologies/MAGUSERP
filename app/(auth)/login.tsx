@@ -1,17 +1,33 @@
-import React, { useState } from 'react';
-import { View, Image, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Image, KeyboardAvoidingView, Platform, ScrollView, Alert, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { useAuth } from '@/src/store/AuthContext';
+import { storage, StorageKeys } from '@/src/utils/storage';
 import { Text }   from '@/src/components/ui/Text';
 import { Input }  from '@/src/components/ui/Input';
 import { Button } from '@/src/components/ui/Button';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen() {
   const { login } = useAuth();
-  const [email,    setEmail]    = useState('');
-  const [password, setPassword] = useState('');
-  const [loading,  setLoading]  = useState(false);
-  const [errors,   setErrors]   = useState<{ email?: string; password?: string }>({});
+  const [email,      setEmail]      = useState('');
+  const [password,   setPassword]   = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loading,    setLoading]    = useState(false);
+  const [errors,     setErrors]     = useState<{ email?: string; password?: string }>({});
+
+  useEffect(() => {
+    loadCredentials();
+  }, []);
+
+  const loadCredentials = async () => {
+    const saved = await storage.get<{ email: string; password: string }>(StorageKeys.SAVED_CREDENTIALS);
+    if (saved) {
+      setEmail(saved.email);
+      setPassword(saved.password);
+      setRememberMe(true);
+    }
+  };
 
   const validate = () => {
     const e: typeof errors = {};
@@ -26,6 +42,13 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await login({ email: email.trim(), password });
+      
+      if (rememberMe) {
+        await storage.set(StorageKeys.SAVED_CREDENTIALS, { email, password });
+      } else {
+        await storage.remove(StorageKeys.SAVED_CREDENTIALS);
+      }
+
       router.replace('/(app)');
     } catch (err: any) {
       Alert.alert('Error', err.message ?? 'Credenciales incorrectas');
@@ -77,6 +100,17 @@ export default function LoginScreen() {
             onChangeText={setPassword}
             error={errors.password}
           />
+
+          <TouchableOpacity
+            onPress={() => setRememberMe(!rememberMe)}
+            activeOpacity={0.7}
+            className="flex-row items-center mb-6 self-start pl-1"
+          >
+            <View className={`w-5 h-5 rounded border items-center justify-center mr-2 ${rememberMe ? 'bg-primary-500 border-primary-500' : 'bg-white border-gray-300'}`}>
+              {rememberMe && <Ionicons name="checkmark" size={14} color="white" />}
+            </View>
+            <Text variant="bodySmall" color="muted">Recordar mis credenciales</Text>
+          </TouchableOpacity>
 
           <Button onPress={handleLogin} loading={loading} fullWidth size="lg">
             Iniciar Sesión

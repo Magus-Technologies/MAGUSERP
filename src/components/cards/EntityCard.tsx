@@ -12,9 +12,10 @@ interface Props {
   imagen?:    string | null;
   onEdit:     () => void;
   onDelete:   () => void;
+  active?:    boolean;
 }
 
-export function EntityCard({ title, subtitle, icon, iconColor = '#458EFF', imagen, onEdit, onDelete }: Props) {
+export function EntityCard({ title, subtitle, icon, iconColor = '#458EFF', imagen, onEdit, onDelete, active = true }: Props) {
   return (
     <Card className="flex-1 m-1.5 overflow-hidden">
       {/* Imagen / ícono */}
@@ -23,6 +24,13 @@ export function EntityCard({ title, subtitle, icon, iconColor = '#458EFF', image
           <Image source={{ uri: imagen }} className="w-full h-full" resizeMode="cover" />
         ) : (
           <Ionicons name={icon as any} size={40} color={iconColor} />
+        )}
+        {!active && (
+          <View className="absolute inset-0 bg-white/60 items-center justify-center">
+            <View className="bg-gray-800/80 px-2 py-1 rounded">
+              <Text className="text-[10px] text-white font-bold">INACTIVO</Text>
+            </View>
+          </View>
         )}
       </View>
 

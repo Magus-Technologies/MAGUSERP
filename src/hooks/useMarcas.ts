@@ -33,20 +33,20 @@ export function useMarcas() {
     setFiltered(q ? marcas.filter(m => m.nombre.toLowerCase().includes(q)) : marcas);
   }, [search, marcas]);
 
-  const create = async (nombre: string, descripcion: string | null) => {
+  const create = async (nombre: string, descripcion: string | null, activo: boolean) => {
     setSaving(true);
     try {
-      await marcaService.create({ nombre, descripcion });
+      await marcaService.create({ nombre, descripcion, activo });
       await load();
     } finally {
       setSaving(false);
     }
   };
 
-  const update = async (id: number, nombre: string, descripcion: string | null) => {
+  const update = async (id: number, nombre: string, descripcion: string | null, activo: boolean) => {
     setSaving(true);
     try {
-      await marcaService.update(id, { nombre, descripcion });
+      await marcaService.update(id, { nombre, descripcion, activo });
       await load();
     } finally {
       setSaving(false);

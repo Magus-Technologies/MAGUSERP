@@ -4,6 +4,8 @@ export interface Categoria {
   descripcion: string | null;
   id_seccion?: number;
   activo?:     boolean;
+  imagen?:     string | null;
+  imagen_url?: string | null;
   created_at?: string;
 }
 
@@ -11,6 +13,9 @@ export interface Marca {
   id:          number;
   nombre:      string;
   descripcion: string | null;
+  activo:      boolean;
+  imagen?:     string | null;
+  imagen_url?: string | null;
   created_at?: string;
 }
 

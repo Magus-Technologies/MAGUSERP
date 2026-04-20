@@ -23,16 +23,18 @@ export default function MarcasScreen() {
   const [selected,       setSelected]       = useState<Marca | null>(null);
   const [nombre,         setNombre]         = useState('');
   const [descripcion,    setDescripcion]    = useState('');
+  const [activo,         setActivo]         = useState(true);
   const [formError,      setFormError]      = useState('');
   const [deleteError,    setDeleteError]    = useState('');
 
   const openCreate = () => {
-    setSelected(null); setNombre(''); setDescripcion(''); setFormError('');
+    setSelected(null); setNombre(''); setDescripcion(''); setActivo(true); setFormError('');
     setFormVisible(true);
   };
 
   const openEdit = (item: Marca) => {
-    setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? ''); setFormError('');
+    setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? '');
+    setActivo(item.activo ?? true); setFormError('');
     setFormVisible(true);
   };
 
@@ -41,9 +43,8 @@ export default function MarcasScreen() {
   const handleSave = async () => {
     if (!nombre.trim()) { setFormError('El nombre es requerido'); return; }
     try {
-      const payload = { nombre: nombre.trim(), descripcion: descripcion.trim() || null };
-      if (selected) { await update(selected.id, payload.nombre, payload.descripcion); }
-      else          { await create(payload.nombre, payload.descripcion); }
+      if (selected) { await update(selected.id, nombre.trim(), descripcion.trim() || null, activo); }
+      else          { await create(nombre.trim(), descripcion.trim() || null, activo); }
       setFormVisible(false);
     } catch (e: any) {
       setFormError(e.message ?? 'Error al guardar');
@@ -96,6 +97,8 @@ export default function MarcasScreen() {
             subtitle={item.descripcion}
             icon="ribbon-outline"
             iconColor="#FF9F29"
+            active={item.activo}
+            imagen={item.imagen_url || item.imagen}
             onEdit={() => openEdit(item)}
             onDelete={() => openDelete(item)}
           />
@@ -127,6 +130,17 @@ export default function MarcasScreen() {
           leftIcon="document-text-outline"
           multiline
         />
+
+        <TouchableOpacity
+          onPress={() => setActivo(!activo)}
+          className="flex-row items-center gap-2 mb-4"
+        >
+          <View className={`w-5 h-5 rounded border-2 items-center justify-center ${activo ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}>
+            {activo && <Ionicons name="checkmark" size={12} color="#fff" />}
+          </View>
+          <Text variant="bodySmall">Activo</Text>
+        </TouchableOpacity>
+
         {formError ? <Text variant="caption" color="error" className="mb-3">{formError}</Text> : null}
       </ActionModal>
 

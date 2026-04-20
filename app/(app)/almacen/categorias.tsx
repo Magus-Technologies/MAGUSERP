@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import { useCategorias }  from '@/src/hooks/useCategorias';
+import { useSecciones }   from '@/src/hooks/useSecciones';
 import { Categoria }      from '@/src/types/almacen.types';
 import { SearchBar }      from '@/src/components/ui/SearchBar';
 import { FAB }            from '@/src/components/ui/FAB';
@@ -13,26 +14,31 @@ import { Input }          from '@/src/components/ui/Input';
 import { LoadingSpinner } from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }     from '@/src/components/ui/EmptyState';
 import { Text }           from '@/src/components/ui/Text';
+import { SelectGroup }    from '@/src/components/ui/SelectGroup';
 
 export default function CategoriasScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { categorias, filtered, search, setSearch, loading, saving, deleting, create, update, remove } = useCategorias();
+  const { secciones } = useSecciones();
 
   const [formVisible,     setFormVisible]     = useState(false);
   const [confirmVisible,  setConfirmVisible]  = useState(false);
   const [selected,        setSelected]        = useState<Categoria | null>(null);
   const [nombre,          setNombre]          = useState('');
   const [descripcion,     setDescripcion]     = useState('');
+  const [idSeccion,       setIdSeccion]       = useState<number>(1);
+  const [activo,          setActivo]          = useState(true);
   const [formError,       setFormError]       = useState('');
   const [deleteError,     setDeleteError]     = useState('');
 
   const openCreate = () => {
-    setSelected(null); setNombre(''); setDescripcion(''); setFormError('');
+    setSelected(null); setNombre(''); setDescripcion(''); setIdSeccion(secciones[0]?.id ?? 1); setActivo(true); setFormError('');
     setFormVisible(true);
   };
 
   const openEdit = (item: Categoria) => {
-    setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? ''); setFormError('');
+    setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? '');
+    setIdSeccion(item.id_seccion ?? 1); setActivo(item.activo ?? true); setFormError('');
     setFormVisible(true);
   };
 
@@ -40,10 +46,10 @@ export default function CategoriasScreen() {
 
   const handleSave = async () => {
     if (!nombre.trim()) { setFormError('El nombre es requerido'); return; }
+    if (!idSeccion) { setFormError('La sección es requerida'); return; }
     try {
-      const payload = { nombre: nombre.trim(), descripcion: descripcion.trim() || null };
-      if (selected) { await update(selected.id, payload.nombre, payload.descripcion); }
-      else          { await create(payload.nombre, payload.descripcion); }
+      if (selected) { await update(selected.id, nombre.trim(), descripcion.trim() || null, idSeccion, activo); }
+      else          { await create(nombre.trim(), descripcion.trim() || null, idSeccion, activo); }
       setFormVisible(false);
     } catch (e: any) {
       setFormError(e.message ?? 'Error al guardar');
@@ -95,6 +101,8 @@ export default function CategoriasScreen() {
             title={item.nombre}
             subtitle={item.descripcion}
             icon="grid-outline"
+            active={item.activo}
+            imagen={item.imagen_url || item.imagen}
             onEdit={() => openEdit(item)}
             onDelete={() => openDelete(item)}
           />
@@ -126,6 +134,25 @@ export default function CategoriasScreen() {
           leftIcon="document-text-outline"
           multiline
         />
+
+        <SelectGroup
+          label="Sección"
+          options={secciones}
+          selectedId={idSeccion}
+          onSelect={setIdSeccion}
+          required
+        />
+
+        <TouchableOpacity
+          onPress={() => setActivo(!activo)}
+          className="flex-row items-center gap-2 mb-4"
+        >
+          <View className={`w-5 h-5 rounded border-2 items-center justify-center ${activo ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}>
+            {activo && <Ionicons name="checkmark" size={12} color="#fff" />}
+          </View>
+          <Text variant="bodySmall">Activo</Text>
+        </TouchableOpacity>
+
         {formError ? <Text variant="caption" color="error" className="mb-3">{formError}</Text> : null}
       </ActionModal>
 
