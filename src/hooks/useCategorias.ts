@@ -33,17 +33,17 @@ export function useCategorias() {
     setFiltered(q ? categorias.filter(c => c.nombre.toLowerCase().includes(q)) : categorias);
   }, [search, categorias]);
 
-  const create = async (nombre: string, descripcion: string | null, id_seccion: number, activo: boolean) => {
+  const create = async (nombre: string, descripcion: string | null, id_seccion: number, activo: boolean, imagen: string | null = null) => {
     setSaving(true);
     try {
-      await categoriaService.create({ nombre, descripcion, id_seccion, activo });
+      await categoriaService.create({ nombre, descripcion, id_seccion, activo, imagen });
       await load();
     } finally {
       setSaving(false);
     }
   };
 
-  const update = async (id: number, nombre: string, descripcion: string | null, id_seccion: number, activo: boolean) => {
+  const update = async (id: number, nombre: string, descripcion: string | null, id_seccion: number, activo: boolean, imagen: string | null = null) => {
     setSaving(true);
     try {
       await categoriaService.update(id, {
@@ -51,6 +51,7 @@ export function useCategorias() {
         descripcion,
         id_seccion,
         activo,
+        imagen,
       });
       await load();
     } finally {

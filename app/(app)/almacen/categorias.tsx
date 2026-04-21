@@ -15,6 +15,7 @@ import { LoadingSpinner } from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }     from '@/src/components/ui/EmptyState';
 import { Text }           from '@/src/components/ui/Text';
 import { SelectGroup }    from '@/src/components/ui/SelectGroup';
+import { ImagePickerComponent } from '@/src/components/ui/ImagePicker';
 
 export default function CategoriasScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -25,6 +26,7 @@ export default function CategoriasScreen() {
   const [confirmVisible,  setConfirmVisible]  = useState(false);
   const [selected,        setSelected]        = useState<Categoria | null>(null);
   const [nombre,          setNombre]          = useState('');
+  const [imagen,          setImagen]          = useState('');
   const [descripcion,     setDescripcion]     = useState('');
   const [idSeccion,       setIdSeccion]       = useState<number>(1);
   const [activo,          setActivo]          = useState(true);
@@ -32,12 +34,12 @@ export default function CategoriasScreen() {
   const [deleteError,     setDeleteError]     = useState('');
 
   const openCreate = () => {
-    setSelected(null); setNombre(''); setDescripcion(''); setIdSeccion(secciones[0]?.id ?? 1); setActivo(true); setFormError('');
+    setSelected(null); setNombre(''); setDescripcion(''); setImagen(''); setIdSeccion(secciones[0]?.id ?? 1); setActivo(true); setFormError('');
     setFormVisible(true);
   };
 
   const openEdit = (item: Categoria) => {
-    setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? '');
+    setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? ''); setImagen(item.imagen ?? '');
     setIdSeccion(item.id_seccion ?? 1); setActivo(item.activo ?? true); setFormError('');
     setFormVisible(true);
   };
@@ -48,8 +50,9 @@ export default function CategoriasScreen() {
     if (!nombre.trim()) { setFormError('El nombre es requerido'); return; }
     if (!idSeccion) { setFormError('La sección es requerida'); return; }
     try {
-      if (selected) { await update(selected.id, nombre.trim(), descripcion.trim() || null, idSeccion, activo); }
-      else          { await create(nombre.trim(), descripcion.trim() || null, idSeccion, activo); }
+      const imgVal = imagen.trim() || null;
+      if (selected) { await update(selected.id, nombre.trim(), descripcion.trim() || null, idSeccion, activo, imgVal); }
+      else          { await create(nombre.trim(), descripcion.trim() || null, idSeccion, activo, imgVal); }
       setFormVisible(false);
     } catch (e: any) {
       setFormError(e.message ?? 'Error al guardar');
@@ -133,6 +136,20 @@ export default function CategoriasScreen() {
           placeholder="Descripción opcional"
           leftIcon="document-text-outline"
           multiline
+        />
+
+        <ImagePickerComponent
+          label="Imagen de la Categoría"
+          imageUri={imagen}
+          onImagePicked={v => setImagen(v || '')}
+        />
+
+        <Input
+          label="O usar URL de Imagen"
+          value={imagen && !imagen.startsWith('file') ? imagen : ''}
+          onChangeText={setImagen}
+          placeholder="https://ejemplo.com/categoria.png"
+          leftIcon="link-outline"
         />
 
         <SelectGroup

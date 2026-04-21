@@ -17,6 +17,7 @@ import { EmptyState }      from '@/src/components/ui/EmptyState';
 import { Text }            from '@/src/components/ui/Text';
 import { ProductoCard }    from '@/src/components/cards/ProductoCard';
 import { SelectGroup }     from '@/src/components/ui/SelectGroup';
+import { ImagePickerComponent } from '@/src/components/ui/ImagePicker';
 
 export default function ProductosScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -170,15 +171,51 @@ export default function ProductosScreen() {
           multiline
         />
 
-        <TouchableOpacity
-          onPress={() => form.setField('activo', !form.form.activo)}
-          className="flex-row items-center gap-2 mt-2 mb-4"
-        >
-          <View className={`w-5 h-5 rounded border-2 items-center justify-center ${form.form.activo ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}>
-            {form.form.activo && <Ionicons name="checkmark" size={12} color="#fff" />}
-          </View>
-          <Text variant="bodySmall">Activo</Text>
-        </TouchableOpacity>
+        <ImagePickerComponent
+          label="Imagen del Producto"
+          imageUri={form.form.imagen || null}
+          onImagePicked={v => form.setField('imagen', v)}
+        />
+
+        <Input
+          label="O usar URL de Imagen"
+          value={form.form.imagen && !form.form.imagen.startsWith('file') ? form.form.imagen : ''}
+          onChangeText={v => form.setField('imagen', v || null)}
+          placeholder="https://ejemplo.com/producto.png"
+          leftIcon="link-outline"
+        />
+
+        <View className="flex-row gap-4 mt-2 mb-4">
+          <TouchableOpacity
+            onPress={() => form.setField('activo', !form.form.activo)}
+            className="flex-row items-center gap-2"
+          >
+            <View className={`w-5 h-5 rounded border-2 items-center justify-center ${form.form.activo ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}>
+              {form.form.activo && <Ionicons name="checkmark" size={12} color="#fff" />}
+            </View>
+            <Text variant="bodySmall">Activo</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => form.setField('destacado', !form.form.destacado)}
+            className="flex-row items-center gap-2"
+          >
+            <View className={`w-5 h-5 rounded border-2 items-center justify-center ${form.form.destacado ? 'bg-orange-500 border-orange-500' : 'border-gray-300'}`}>
+              {form.form.destacado && <Ionicons name="star" size={12} color="#fff" />}
+            </View>
+            <Text variant="bodySmall">Destacado</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => form.setField('mostrar_igv', !form.form.mostrar_igv)}
+            className="flex-row items-center gap-2"
+          >
+            <View className={`w-5 h-5 rounded border-2 items-center justify-center ${form.form.mostrar_igv ? 'bg-blue-500 border-blue-500' : 'border-gray-300'}`}>
+              {form.form.mostrar_igv && <Ionicons name="checkmark" size={12} color="#fff" />}
+            </View>
+            <Text variant="bodySmall">Mostrar IGV</Text>
+          </TouchableOpacity>
+        </View>
 
         {form.error ? <Text variant="caption" color="error" className="mb-3">{form.error}</Text> : null}
       </ActionModal>

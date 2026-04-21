@@ -13,6 +13,7 @@ import { Input }          from '@/src/components/ui/Input';
 import { LoadingSpinner } from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }     from '@/src/components/ui/EmptyState';
 import { Text }           from '@/src/components/ui/Text';
+import { ImagePickerComponent } from '@/src/components/ui/ImagePicker';
 
 export default function MarcasScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -22,18 +23,20 @@ export default function MarcasScreen() {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [selected,       setSelected]       = useState<Marca | null>(null);
   const [nombre,         setNombre]         = useState('');
+  const [imagen,         setImagen]         = useState('');
   const [descripcion,    setDescripcion]    = useState('');
   const [activo,         setActivo]         = useState(true);
   const [formError,      setFormError]      = useState('');
   const [deleteError,    setDeleteError]    = useState('');
 
   const openCreate = () => {
-    setSelected(null); setNombre(''); setDescripcion(''); setActivo(true); setFormError('');
+    setSelected(null); setNombre(''); setDescripcion(''); setImagen(''); setActivo(true); setFormError('');
     setFormVisible(true);
   };
 
   const openEdit = (item: Marca) => {
     setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? '');
+    setImagen(item.imagen ?? '');
     setActivo(item.activo ?? true); setFormError('');
     setFormVisible(true);
   };
@@ -43,8 +46,9 @@ export default function MarcasScreen() {
   const handleSave = async () => {
     if (!nombre.trim()) { setFormError('El nombre es requerido'); return; }
     try {
-      if (selected) { await update(selected.id, nombre.trim(), descripcion.trim() || null, activo); }
-      else          { await create(nombre.trim(), descripcion.trim() || null, activo); }
+      const imgVal = imagen.trim() || null;
+      if (selected) { await update(selected.id, nombre.trim(), descripcion.trim() || null, activo, imgVal); }
+      else          { await create(nombre.trim(), descripcion.trim() || null, activo, imgVal); }
       setFormVisible(false);
     } catch (e: any) {
       setFormError(e.message ?? 'Error al guardar');
@@ -129,6 +133,20 @@ export default function MarcasScreen() {
           placeholder="Descripción opcional"
           leftIcon="document-text-outline"
           multiline
+        />
+
+        <ImagePickerComponent
+          label="Imagen de la Marca"
+          imageUri={imagen}
+          onImagePicked={v => setImagen(v || '')}
+        />
+
+        <Input
+          label="O usar URL de Imagen"
+          value={imagen && !imagen.startsWith('file') ? imagen : ''}
+          onChangeText={setImagen}
+          placeholder="https://ejemplo.com/logo.png"
+          leftIcon="link-outline"
         />
 
         <TouchableOpacity

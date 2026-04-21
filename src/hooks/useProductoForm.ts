@@ -5,7 +5,8 @@ import { Producto } from '../types/almacen.types';
 const EMPTY: ProductoPayload = {
   nombre: '', descripcion: null, codigo_producto: '',
   precio_venta: 0, precio_compra: 0,
-  stock: 0, stock_minimo: 5, categoria_id: 0, marca_id: null, activo: true,
+  stock: 0, stock_minimo: 5, categoria_id: 0, marca_id: null, 
+  activo: true, destacado: false, mostrar_igv: true, imagen: null,
 };
 
 export function useProductoForm(onSuccess: () => void) {
@@ -27,6 +28,9 @@ export function useProductoForm(onSuccess: () => void) {
       categoria_id:    producto.categoria_id,
       marca_id:        producto.marca_id,
       activo:          (producto as any).activo ?? true,
+      destacado:       (producto as any).destacado ?? false,
+      mostrar_igv:     (producto as any).mostrar_igv ?? true,
+      imagen:          (producto as any).imagen ?? null,
     } : EMPTY);
     setError('');
   };

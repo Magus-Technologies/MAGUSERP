@@ -19,6 +19,9 @@ export interface ProductoPayload {
   categoria_id:    number;
   marca_id:        number | null;
   activo:          boolean;
+  destacado:       boolean;
+  mostrar_igv:     boolean;
+  imagen?:         string | null;
 }
 
 export const productoService = {
@@ -33,10 +36,55 @@ export const productoService = {
   },
 
   create(data: ProductoPayload): Promise<Producto> {
+    if (data.imagen?.startsWith('file://')) {
+      const formData = new FormData();
+      formData.append('nombre',          data.nombre);
+      formData.append('codigo_producto', data.codigo_producto);
+      formData.append('categoria_id',    String(data.categoria_id));
+      formData.append('precio_compra',   String(data.precio_compra));
+      formData.append('precio_venta',    String(data.precio_venta));
+      formData.append('stock',           String(data.stock));
+      formData.append('stock_minimo',    String(data.stock_minimo));
+      formData.append('activo',          data.activo ? '1' : '0');
+      formData.append('destacado',       data.destacado ? '1' : '0');
+      formData.append('mostrar_igv',     data.mostrar_igv ? '1' : '0');
+      if (data.descripcion) formData.append('descripcion', data.descripcion);
+      if (data.marca_id)    formData.append('marca_id',     String(data.marca_id));
+
+      const filename = data.imagen.split('/').pop();
+      const match = /\.(\w+)$/.exec(filename || '');
+      const type = match ? `image/${match[1]}` : 'image';
+      formData.append('imagen', { uri: data.imagen, name: filename, type } as any);
+
+      return apiClient.postForm('/productos', formData);
+    }
     return apiClient.post('/productos', data);
   },
 
   update(id: number, data: ProductoPayload): Promise<Producto> {
+    if (data.imagen?.startsWith('file://')) {
+      const formData = new FormData();
+      formData.append('_method',         'PUT');
+      formData.append('nombre',          data.nombre);
+      formData.append('codigo_producto', data.codigo_producto);
+      formData.append('categoria_id',    String(data.categoria_id));
+      formData.append('precio_compra',   String(data.precio_compra));
+      formData.append('precio_venta',    String(data.precio_venta));
+      formData.append('stock',           String(data.stock));
+      formData.append('stock_minimo',    String(data.stock_minimo));
+      formData.append('activo',          data.activo ? '1' : '0');
+      formData.append('destacado',       data.destacado ? '1' : '0');
+      formData.append('mostrar_igv',     data.mostrar_igv ? '1' : '0');
+      if (data.descripcion) formData.append('descripcion', data.descripcion);
+      if (data.marca_id)    formData.append('marca_id',     String(data.marca_id));
+
+      const filename = data.imagen.split('/').pop();
+      const match = /\.(\w+)$/.exec(filename || '');
+      const type = match ? `image/${match[1]}` : 'image';
+      formData.append('imagen', { uri: data.imagen, name: filename, type } as any);
+
+      return apiClient.postForm(`/productos/${id}`, formData);
+    }
     return apiClient.put(`/productos/${id}`, data);
   },
 
