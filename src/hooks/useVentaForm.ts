@@ -28,7 +28,7 @@ export function useVentaForm(onSuccess: () => void) {
   const [clienteId,    setClienteId]    = useState<number | null>(null);
   const [clienteData,  setClienteData]  = useState<ClienteData>({ ...EMPTY_CLIENTE });
   const [items,        setItems]        = useState<VentaItem[]>([]);
-  const [tipoComprobante, setTipoComprobante] = useState<'01' | '03'>('03'); // 01: Factura, 03: Boleta
+  const [tipoComprobante, setTipoComprobante] = useState<'01' | '03' | '99'>('03'); // 01: Factura, 03: Boleta, 99: Nota de Venta
   const [metodoPago,     setMetodoPago]     = useState('EFECTIVO');
   const [observaciones,  setObservaciones]  = useState('');
   const [descuentoTotal, setDescuentoTotal] = useState(0);
@@ -73,6 +73,13 @@ export function useVentaForm(onSuccess: () => void) {
       } else {
         setSerieId(null);
       }
+    }
+
+    // Ajustar tipo de documento del cliente según comprobante
+    if (tipoComprobante === '01') {
+      setClienteData(prev => ({ ...prev, tipo_documento: '6' }));
+    } else if (tipoComprobante === '03' && clienteData.tipo_documento === '6') {
+      setClienteData(prev => ({ ...prev, tipo_documento: '1' }));
     }
   }, [tipoComprobante, series]);
 
@@ -199,6 +206,7 @@ export function useVentaForm(onSuccess: () => void) {
         metodo_pago:      metodoPago,
         observaciones:    observaciones || undefined,
         requiere_factura: tipoComprobante === '01',
+        tipo_documento:   tipoComprobante,
         descuento_total:  descuentoTotal,
       };
 

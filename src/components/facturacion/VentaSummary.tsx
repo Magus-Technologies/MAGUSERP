@@ -26,51 +26,17 @@ interface Props {
   onMetodoChange: (v: string) => void;
   observaciones: string;
   onObservacionesChange: (v: string) => void;
-  tipoComprobante: '01' | '03';
-  onTipoComprobanteChange: (v: '01' | '03') => void;
-  series: any[];
-  serieId: number | null;
-  onSerieChange: (v: number) => void;
 }
-
-const TIPOS_COMPROBANTE = [
-  { id: '03', nombre: 'Boleta' },
-  { id: '01', nombre: 'Factura' },
-];
 
 export function VentaSummary({
   subtotal, igv, total, descuentoTotal, onDescuentoChange,
   metodoPago, onMetodoChange, observaciones, onObservacionesChange,
-  tipoComprobante, onTipoComprobanteChange,
-  series, serieId, onSerieChange
 }: Props) {
-  // Filtrar series por tipo de comprobante seleccionado
-  const filteredSeries = series.filter(s => s.tipo_comprobante === tipoComprobante);
-
   const [pagaCon, setPagaCon] = useState<number>(0);
   const vuelto = pagaCon > total ? pagaCon - total : 0;
 
   return (
     <Card className="p-4 gap-4">
-      <View className="flex-row gap-2">
-        <View className="flex-1">
-          <SelectGroup
-            label="Tipo de Comprobante"
-            options={TIPOS_COMPROBANTE}
-            selectedId={tipoComprobante}
-            onSelect={(v) => onTipoComprobanteChange(v as any)}
-          />
-        </View>
-        <View className="flex-1">
-          <SelectGroup
-            label="Serie"
-            options={filteredSeries.map(s => ({ id: String(s.id), nombre: s.serie }))}
-            selectedId={String(serieId || '')}
-            onSelect={(v) => onSerieChange(Number(v))}
-          />
-        </View>
-      </View>
-
       <SelectGroup
         label="Método de Pago"
         options={METODOS_PAGO}

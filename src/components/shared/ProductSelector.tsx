@@ -13,9 +13,10 @@ interface Props {
   isSearching: boolean;
   results: ProductSummary[];
   onSelect: (p: ProductSummary) => void;
+  selectedIds?: number[];
 }
 
-export function ProductSelector({ query, onQueryChange, isSearching, results, onSelect }: Props) {
+export function ProductSelector({ query, onQueryChange, isSearching, results, onSelect, selectedIds = [] }: Props) {
   return (
     <View className="gap-3">
       <Input
@@ -45,7 +46,12 @@ export function ProductSelector({ query, onQueryChange, isSearching, results, on
                   </Text>
                 </View>
               </View>
-              <Text variant="label" className="text-primary-600">{formatCurrency(p.precio_venta)}</Text>
+              <View className="items-end gap-1">
+                <Text variant="label" className="text-primary-600">{formatCurrency(p.precio_venta)}</Text>
+                <View className={`w-5 h-5 rounded-full items-center justify-center border ${selectedIds.includes(p.id) ? 'bg-primary-500 border-primary-500' : 'border-gray-300'}`}>
+                  {selectedIds.includes(p.id) && <Ionicons name="checkmark" size={14} color="white" />}
+                </View>
+              </View>
             </TouchableOpacity>
           ))}
         </View>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, ScrollView } from 'react-native';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../../store/AuthContext';
 import { Text } from '../ui/Text';
 
@@ -46,6 +46,7 @@ const MENU: MenuItem[] = [
 ];
 
 export function DrawerContent({ navigation }: DrawerContentComponentProps) {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const [expanded, setExpanded] = useState<string[]>([]);
 

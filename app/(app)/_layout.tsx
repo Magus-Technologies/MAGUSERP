@@ -15,7 +15,7 @@ export default function AppLayout() {
   }, [isAuthenticated, isLoading]);
 
   return (
-    <GestureHandlerRootView className="flex-1">
+    <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
         drawerContent={(props) => <DrawerContent {...props} />}
         screenOptions={{

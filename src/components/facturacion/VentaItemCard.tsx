@@ -31,7 +31,7 @@ export function VentaItemCard({ item, onUpdate, onRemove }: Props) {
         </TouchableOpacity>
       </View>
 
-      <View className="flex-row gap-2 mb-2">
+      <View className="flex-row gap-3 items-center">
         <View className="flex-1">
           <Input
             label="Precio"
@@ -43,46 +43,17 @@ export function VentaItemCard({ item, onUpdate, onRemove }: Props) {
         </View>
         <View className="flex-1">
           <Input
-            label="Cant."
+            label="Cantidad"
             value={String(item.cantidad)}
             onChangeText={v => onUpdate('cantidad', parseFloat(v) || 0)}
             keyboardType="numeric"
             size="sm"
           />
         </View>
-        <View className="flex-1">
-          <Input
-            label="Desc."
-            value={String(item.descuento_unitario)}
-            onChangeText={v => onUpdate('descuento_unitario', parseFloat(v) || 0)}
-            keyboardType="numeric"
-            size="sm"
-          />
-        </View>
-      </View>
-
-      <View className="flex-row gap-2">
-        <View className="flex-1">
-          <Text variant="caption" className="mb-1 ml-1 text-gray-500">Unidad</Text>
-          <View className="bg-white border border-gray-200 rounded-lg h-9 justify-center px-2">
-            <Text variant="caption">{item.unidad_medida}</Text>
-          </View>
-        </View>
-        <View className="flex-[1.5]">
-          <Text variant="caption" className="mb-1 ml-1 text-gray-500">Afectación</Text>
-          <View className="flex-row gap-1 flex-wrap">
-            {AFECTACIONES.slice(0, 3).map(af => (
-              <TouchableOpacity
-                key={af.id}
-                onPress={() => onUpdate('tipo_afectacion_igv', af.id)}
-                className={`px-2 py-1 rounded-md border ${item.tipo_afectacion_igv === af.id ? 'bg-primary-50 border-primary-500' : 'bg-white border-gray-200'}`}
-              >
-                <Text variant="caption" className={item.tipo_afectacion_igv === af.id ? 'text-primary-700 font-medium' : 'text-gray-600'}>
-                  {af.id}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+        <View className="flex-1 items-end pt-5">
+           <Text variant="h4" className="text-primary-600">
+             {((item.precio_unitario) * item.cantidad).toFixed(2)}
+           </Text>
         </View>
       </View>
     </View>
