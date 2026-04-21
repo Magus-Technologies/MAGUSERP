@@ -26,9 +26,10 @@ const colorClass: Record<Color, string> = {
 };
 
 interface Props extends TextProps {
-  variant?: Variant;
-  color?:   Color;
-  children: React.ReactNode;
+  variant?:   Variant;
+  color?:     Color;
+  className?: string;
+  children:   React.ReactNode;
 }
 
 export function Text({ variant = 'body', color = 'default', className = '', children, ...rest }: Props) {

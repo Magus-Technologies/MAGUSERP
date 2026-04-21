@@ -9,12 +9,15 @@ interface Props extends TextInputProps {
   leftIcon?:         keyof typeof Ionicons.glyphMap;
   rightIcon?:        keyof typeof Ionicons.glyphMap;
   onRightIconPress?: () => void;
+  className?:        string;
+  size?:             'sm' | 'md';
 }
 
-export function Input({ label, error, leftIcon, rightIcon, onRightIconPress, secureTextEntry, className = '', ...rest }: Props) {
+export function Input({ label, error, leftIcon, rightIcon, onRightIconPress, secureTextEntry, className = '', size = 'md', ...rest }: Props) {
   const [focused, setFocused] = useState(false);
   const [secure,  setSecure]  = useState(secureTextEntry ?? false);
   const isPassword = secureTextEntry === true;
+  const height = size === 'sm' ? 'h-9' : 'h-12';
 
   return (
     <View className="mb-4">
@@ -26,7 +29,7 @@ export function Input({ label, error, leftIcon, rightIcon, onRightIconPress, sec
         )}
 
         <TextInput
-          className={`flex-1 h-12 text-sm text-gray-800 ${className}`}
+          className={`flex-1 ${height} text-sm text-gray-800 ${className}`}
           placeholderTextColor="#9ca3af"
           secureTextEntry={secure}
           onFocus={() => setFocused(true)}

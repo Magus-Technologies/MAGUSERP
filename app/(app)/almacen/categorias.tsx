@@ -39,7 +39,7 @@ export default function CategoriasScreen() {
   };
 
   const openEdit = (item: Categoria) => {
-    setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? ''); setImagen(item.imagen ?? '');
+    setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? ''); setImagen(item.imagen_url || item.imagen || '');
     setIdSeccion(item.id_seccion ?? 1); setActivo(item.activo ?? true); setFormError('');
     setFormVisible(true);
   };

@@ -107,4 +107,8 @@ export const productoService = {
   delete(id: number): Promise<void> {
     return apiClient.delete(`/productos/${id}`);
   },
+
+  getById(id: number): Promise<Producto> {
+    return apiClient.get(`/productos/${id}`);
+  },
 };

@@ -40,11 +40,12 @@ interface Props {
   disabled?: boolean;
   fullWidth?: boolean;
   style?:    StyleProp<ViewStyle>;
+  className?: string;
 }
 
 export function Button({
   onPress, children, variant = 'primary', size = 'md',
-  loading = false, disabled = false, fullWidth = false, style,
+  loading = false, disabled = false, fullWidth = false, style, className = '',
 }: Props) {
   const isDisabled = disabled || loading;
 
@@ -53,7 +54,7 @@ export function Button({
       onPress={onPress}
       disabled={isDisabled}
       activeOpacity={0.8}
-      className={`flex-row items-center justify-center rounded-xl ${variantClass[variant]} ${sizeClass[size]} ${fullWidth ? 'w-full' : ''} ${isDisabled ? 'opacity-50' : ''}`}
+      className={`flex-row items-center justify-center rounded-xl ${variantClass[variant]} ${sizeClass[size]} ${fullWidth ? 'w-full' : ''} ${isDisabled ? 'opacity-50' : ''} ${className}`}
       style={style}
     >
       {loading ? (

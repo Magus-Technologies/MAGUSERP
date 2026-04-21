@@ -19,6 +19,7 @@ import { ProductoCard }    from '@/src/components/cards/ProductoCard';
 import { SelectGroup }     from '@/src/components/ui/SelectGroup';
 import { SearchableSelect } from '@/src/components/ui/SearchableSelect';
 import { ImagePickerComponent } from '@/src/components/ui/ImagePicker';
+import { StatusModal } from '@/src/components/ui/StatusModal';
 
 export default function ProductosScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -31,20 +32,50 @@ export default function ProductosScreen() {
   const [formVisible,    setFormVisible]    = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [toDelete,       setToDelete]       = useState<Producto | null>(null);
+  
+  const [status, setStatus] = useState<{ visible: boolean; type: 'success' | 'error'; title: string; message: string }>({
+    visible: false, type: 'success', title: '', message: ''
+  });
 
   const openCreate = () => { form.open(); setFormVisible(true); };
   const openEdit   = (p: Producto) => { form.open(p); setFormVisible(true); };
   const openDelete = (p: Producto) => { setToDelete(p); setConfirmVisible(true); };
 
   const handleSave = async () => {
+    const isEdit = !!form.editing;
     const ok = await form.save();
-    if (ok) setFormVisible(false);
+    if (ok) {
+      setFormVisible(false);
+      setStatus({
+        visible: true,
+        type: 'success',
+        title: isEdit ? 'Producto Actualizado' : 'Producto Creado',
+        message: `El producto se ha ${isEdit ? 'actualizado' : 'creado'} exitosamente.`
+      });
+    } else {
+      // Si hay error en el form, useProductoForm ya maneja form.error
+    }
   };
 
   const handleDelete = async () => {
     if (!toDelete) return;
-    await list.remove(toDelete.id);
-    setConfirmVisible(false);
+    try {
+      await list.remove(toDelete.id);
+      setConfirmVisible(false);
+      setStatus({
+        visible: true,
+        type: 'success',
+        title: 'Producto Eliminado',
+        message: 'El producto ha sido eliminado del almacén.'
+      });
+    } catch (e: any) {
+      setStatus({
+        visible: true,
+        type: 'error',
+        title: 'Error al eliminar',
+        message: e.message ?? 'No se pudo eliminar el producto.'
+      });
+    }
   };
 
   if (list.loading) return <LoadingSpinner message="Cargando productos..." />;
@@ -165,6 +196,12 @@ export default function ProductosScreen() {
           nullLabel="Sin marca"
         />
 
+        <ImagePickerComponent
+          label="Imagen del Producto"
+          imageUri={form.form.imagen || null}
+          onImagePicked={v => form.setField('imagen', v)}
+        />
+
         <Input
           label="Descripción"
           value={form.form.descripcion ?? ''}
@@ -172,12 +209,8 @@ export default function ProductosScreen() {
           placeholder="Descripción opcional"
           leftIcon="document-text-outline"
           multiline
-        />
-
-        <ImagePickerComponent
-          label="Imagen del Producto"
-          imageUri={form.form.imagen || null}
-          onImagePicked={v => form.setField('imagen', v)}
+          numberOfLines={4}
+          style={{ height: 100, textAlignVertical: 'top', paddingTop: 10 }}
         />
 
         <Input
@@ -231,6 +264,14 @@ export default function ProductosScreen() {
         onConfirm={handleDelete}
         onCancel={() => setConfirmVisible(false)}
         loading={list.deleting}
+      />
+
+      <StatusModal
+        visible={status.visible}
+        type={status.type}
+        title={status.title}
+        message={status.message}
+        onClose={() => setStatus(prev => ({ ...prev, visible: false }))}
       />
     </View>
   );

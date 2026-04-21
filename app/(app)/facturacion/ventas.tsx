@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { DrawerNavigationProp } from '@react-navigation/drawer';
+import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useVentas }             from '@/src/hooks/useVentas';
 import { VentaCard }             from '@/src/components/cards/VentaCard';
-import { CreateVentaModal }      from '@/src/components/facturacion/CreateVentaModal';
 import { SearchBar }             from '@/src/components/ui/SearchBar';
 import { FAB }                   from '@/src/components/ui/FAB';
 import { LoadingSpinner }        from '@/src/components/ui/LoadingSpinner';
@@ -20,9 +18,7 @@ const ESTADOS = [
 ];
 
 export default function VentasScreen() {
-  const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { ventas, search, setSearch, estado, applyEstado, total, loading, loadingMore, error, loadMore, refresh } = useVentas();
-  const [createVisible, setCreateVisible] = useState(false);
 
   if (loading) return <LoadingSpinner message="Cargando ventas..." />;
 
@@ -30,7 +26,7 @@ export default function VentasScreen() {
     <View className="flex-1 bg-gray-50">
       {/* Header */}
       <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
+        <TouchableOpacity onPress={() => router.navigate('/(app)')} className="mr-3">
           <Ionicons name="menu" size={26} color="#fff" />
         </TouchableOpacity>
         <View className="flex-1">
@@ -91,13 +87,7 @@ export default function VentasScreen() {
         renderItem={({ item }) => <VentaCard item={item} />}
       />
 
-      <FAB onPress={() => setCreateVisible(true)} />
-
-      <CreateVentaModal
-        visible={createVisible}
-        onClose={() => setCreateVisible(false)}
-        onSuccess={() => { setCreateVisible(false); refresh(); }}
-      />
+      <FAB onPress={() => router.push('/facturacion/nueva-venta' as any)} />
     </View>
   );
 }

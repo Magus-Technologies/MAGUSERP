@@ -12,27 +12,55 @@ const EMPTY: ProductoPayload = {
 export function useProductoForm(onSuccess: () => void) {
   const [form,    setForm]    = useState<ProductoPayload>(EMPTY);
   const [error,   setError]   = useState('');
-  const [saving,  setSaving]  = useState(false);
-  const [editing, setEditing] = useState<Producto | null>(null);
+  const [saving,           setSaving]           = useState(false);
+  const [loadingDetails,   setLoadingDetails]   = useState(false);
+  const [editing,          setEditing]          = useState<Producto | null>(null);
 
   const open = (producto?: Producto) => {
     setEditing(producto ?? null);
-    setForm(producto ? {
-      nombre:          producto.nombre,
-      descripcion:     producto.descripcion,
-      codigo_producto: (producto as any).codigo_producto ?? '',
-      precio_venta:    producto.precio_venta ?? producto.precio,
-      precio_compra:   producto.precio_compra,
-      stock:           producto.stock,
-      stock_minimo:    producto.stock_minimo,
-      categoria_id:    producto.categoria_id,
-      marca_id:        producto.marca_id,
-      activo:          (producto as any).activo ?? true,
-      destacado:       (producto as any).destacado ?? false,
-      mostrar_igv:     (producto as any).mostrar_igv ?? true,
-      imagen:          (producto as any).imagen ?? null,
-    } : EMPTY);
+    if (producto) {
+      const data: ProductoPayload = {
+        nombre:          producto.nombre,
+        descripcion:     producto.descripcion,
+        codigo_producto: (producto as any).codigo_producto ?? '',
+        precio_venta:    producto.precio_venta ?? producto.precio,
+        precio_compra:   producto.precio_compra,
+        stock:           producto.stock,
+        stock_minimo:    producto.stock_minimo,
+        categoria_id:    producto.categoria_id,
+        marca_id:        producto.marca_id,
+        activo:          (producto as any).activo ?? true,
+        destacado:       (producto as any).destacado ?? false,
+        mostrar_igv:     (producto as any).mostrar_igv ?? true,
+        imagen:          producto.imagen_url || (producto as any).imagen || null,
+      };
+      setForm(data);
+      
+      // Si faltan campos clave como descripción o mostrar_igv, intentamos cargar detalles completos
+      if (producto.descripcion === undefined || (producto as any).mostrar_igv === undefined) {
+        loadFullDetails(producto.id);
+      }
+    } else {
+      setForm(EMPTY);
+    }
     setError('');
+  };
+
+  const loadFullDetails = async (id: number) => {
+    setLoadingDetails(true);
+    try {
+      const full = await productoService.getById(id);
+      setForm(prev => ({
+        ...prev,
+        descripcion: full.descripcion,
+        mostrar_igv: full.mostrar_igv,
+        imagen:      full.imagen_url || full.imagen || prev.imagen,
+      }));
+    } catch (e) {
+      console.warn('No se pudo cargar detalles completos:', e);
+    } finally {
+      setLoadingDetails(false);
+    }
   };
 
   const reset = () => {
@@ -82,5 +110,5 @@ export function useProductoForm(onSuccess: () => void) {
     }
   };
 
-  return { form, error, saving, editing, open, reset, setField, save };
+  return { form, error, saving, loadingDetails, editing, open, reset, setField, save };
 }

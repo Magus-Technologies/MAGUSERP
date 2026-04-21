@@ -36,7 +36,7 @@ export default function MarcasScreen() {
 
   const openEdit = (item: Marca) => {
     setSelected(item); setNombre(item.nombre); setDescripcion(item.descripcion ?? '');
-    setImagen(item.imagen ?? '');
+    setImagen(item.imagen_url || item.imagen || '');
     setActivo(item.activo ?? true); setFormError('');
     setFormVisible(true);
   };
