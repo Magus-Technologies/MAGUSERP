@@ -17,6 +17,7 @@ import { EmptyState }      from '@/src/components/ui/EmptyState';
 import { Text }            from '@/src/components/ui/Text';
 import { ProductoCard }    from '@/src/components/cards/ProductoCard';
 import { SelectGroup }     from '@/src/components/ui/SelectGroup';
+import { SearchableSelect } from '@/src/components/ui/SearchableSelect';
 import { ImagePickerComponent } from '@/src/components/ui/ImagePicker';
 
 export default function ProductosScreen() {
@@ -145,19 +146,21 @@ export default function ProductosScreen() {
           </View>
         </View>
 
-        <SelectGroup
+        <SearchableSelect
           label="Categoría"
           options={categorias}
           selectedId={form.form.categoria_id}
           onSelect={id => form.setField('categoria_id', id)}
+          placeholder="Seleccionar categoría..."
           required
         />
 
-        <SelectGroup
+        <SearchableSelect
           label="Marca"
           options={marcas}
           selectedId={form.form.marca_id}
           onSelect={id => form.setField('marca_id', id)}
+          placeholder="Seleccionar marca..."
           allowNull
           nullLabel="Sin marca"
         />

@@ -48,7 +48,14 @@ export const categoriaService = {
 
       return apiClient.postForm(`/categorias/${id}`, formData);
     }
-    return apiClient.put(`/categorias/${id}`, data);
+    
+    // Si no hay imagen nueva, enviamos JSON pero SIN el campo imagen 
+    // porque el backend validaría que sea un archivo.
+    const { imagen, ...jsonData } = data;
+    return apiClient.put(`/categorias/${id}`, {
+      ...jsonData,
+      activo: data.activo ? 1 : 0
+    });
   },
 
   delete(id: number): Promise<void> {

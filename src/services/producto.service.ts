@@ -58,7 +58,15 @@ export const productoService = {
 
       return apiClient.postForm('/productos', formData);
     }
-    return apiClient.post('/productos', data);
+    
+    // JSON Version
+    const { imagen, ...jsonData } = data;
+    return apiClient.post('/productos', {
+      ...jsonData,
+      activo:      data.activo ? 1 : 0,
+      destacado:   data.destacado ? 1 : 0,
+      mostrar_igv: data.mostrar_igv ? 1 : 0
+    });
   },
 
   update(id: number, data: ProductoPayload): Promise<Producto> {
@@ -85,7 +93,15 @@ export const productoService = {
 
       return apiClient.postForm(`/productos/${id}`, formData);
     }
-    return apiClient.put(`/productos/${id}`, data);
+    
+    // JSON Version
+    const { imagen, ...jsonData } = data;
+    return apiClient.put(`/productos/${id}`, {
+      ...jsonData,
+      activo:      data.activo ? 1 : 0,
+      destacado:   data.destacado ? 1 : 0,
+      mostrar_igv: data.mostrar_igv ? 1 : 0
+    });
   },
 
   delete(id: number): Promise<void> {

@@ -20,7 +20,12 @@ export const marcaService = {
 
       return apiClient.postForm('/marcas', formData);
     }
-    return apiClient.post('/marcas', data);
+    
+    const { imagen, ...jsonData } = data;
+    return apiClient.post('/marcas', {
+      ...jsonData,
+      activo: data.activo ? 1 : 0
+    });
   },
 
   update(id: number, data: Pick<Marca, 'nombre' | 'descripcion' | 'activo' | 'imagen'>): Promise<Marca> {
@@ -38,7 +43,12 @@ export const marcaService = {
 
       return apiClient.postForm(`/marcas/${id}`, formData);
     }
-    return apiClient.put(`/marcas/${id}`, data);
+    
+    const { imagen, ...jsonData } = data;
+    return apiClient.put(`/marcas/${id}`, {
+      ...jsonData,
+      activo: data.activo ? 1 : 0
+    });
   },
 
   delete(id: number): Promise<void> {
