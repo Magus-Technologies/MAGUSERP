@@ -88,6 +88,7 @@ export function VentaSummary({
              onChangeText={v => onDescuentoChange(parseFloat(v) || 0)}
              keyboardType="numeric"
              size="sm"
+             textAlign="center"
            />
         </View>
         <View className="items-end">

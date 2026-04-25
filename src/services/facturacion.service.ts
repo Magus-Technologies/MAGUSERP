@@ -11,6 +11,12 @@ export interface VentasParams {
   page?:    number;
 }
 
+export interface CotizacionesParams {
+  search?:  string;
+  estado?:  string;
+  page?:    number;
+}
+
 export const facturacionService = {
   getVentas(params: VentasParams = {}): Promise<any> {
     const q = new URLSearchParams();
@@ -19,6 +25,19 @@ export const facturacionService = {
     if (params.page)   q.set('page', String(params.page));
     const qs = q.toString();
     return apiClient.get(`/ventas${qs ? '?' + qs : ''}`);
+  },
+
+  getCotizaciones(params: CotizacionesParams = {}): Promise<any> {
+    const q = new URLSearchParams();
+    if (params.search) q.set('search', params.search);
+    if (params.estado) q.set('estado', params.estado);
+    if (params.page)   q.set('page', String(params.page));
+    const qs = q.toString();
+    return apiClient.get(`/cotizaciones${qs ? '?' + qs : ''}`);
+  },
+
+  updateCotizacion(id: number, data: any): Promise<any> {
+    return apiClient.patch(`/cotizaciones/${id}`, data);
   },
 
   getVentasEstadisticas(): Promise<VentasEstadisticas> {

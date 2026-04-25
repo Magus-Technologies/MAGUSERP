@@ -11,13 +11,17 @@ interface Props extends TextInputProps {
   onRightIconPress?: () => void;
   className?:        string;
   size?:             'sm' | 'md';
+  textAlign?:        'left' | 'center';
 }
 
-export function Input({ label, error, leftIcon, rightIcon, onRightIconPress, secureTextEntry, className = '', size = 'md', ...rest }: Props) {
+export function Input({ label, error, leftIcon, rightIcon, onRightIconPress, secureTextEntry, className = '', size = 'md', textAlign = 'left', ...rest }: Props) {
   const [focused, setFocused] = useState(false);
   const [secure,  setSecure]  = useState(secureTextEntry ?? false);
   const isPassword = secureTextEntry === true;
-  const height = size === 'sm' ? 'h-9' : 'h-12';
+  const inputHeight = size === 'sm' ? 36 : 48;
+
+  // Extraer textAlign del rest para evitar duplicados
+  const { textAlign: _, ...cleanRest } = rest as any;
 
   return (
     <View className="mb-4">
@@ -29,12 +33,20 @@ export function Input({ label, error, leftIcon, rightIcon, onRightIconPress, sec
         )}
 
         <TextInput
-          className={`flex-1 ${height} text-sm text-gray-800 ${className}`}
+          style={{
+            flex: 1,
+            height: inputHeight,
+            fontSize: 14,
+            color: '#1f2937',
+            textAlign: textAlign as any,
+            textAlignVertical: 'center',
+            paddingVertical: 0,
+          }}
           placeholderTextColor="#9ca3af"
           secureTextEntry={secure}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          {...rest}
+          {...cleanRest}
         />
 
         {isPassword ? (

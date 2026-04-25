@@ -31,7 +31,7 @@ export function VentaItemCard({ item, onUpdate, onRemove }: Props) {
         </TouchableOpacity>
       </View>
 
-      <View className="flex-row gap-3 items-center">
+      <View className="flex-row gap-3 items-end">
         <View className="flex-1">
           <Input
             label="Precio"
@@ -39,6 +39,7 @@ export function VentaItemCard({ item, onUpdate, onRemove }: Props) {
             onChangeText={v => onUpdate('precio_unitario', parseFloat(v) || 0)}
             keyboardType="numeric"
             size="sm"
+            textAlign="center"
           />
         </View>
         <View className="flex-1">
@@ -48,12 +49,14 @@ export function VentaItemCard({ item, onUpdate, onRemove }: Props) {
             onChangeText={v => onUpdate('cantidad', parseFloat(v) || 0)}
             keyboardType="numeric"
             size="sm"
+            textAlign="center"
           />
         </View>
-        <View className="flex-1 items-end pt-5">
-           <Text variant="h4" className="text-primary-600">
-             {((item.precio_unitario) * item.cantidad).toFixed(2)}
-           </Text>
+        <View className="flex-1 items-end">
+          <Text variant="caption" color="muted" className="mb-1">Total</Text>
+          <Text variant="label" className="text-primary-600">
+            {((item.precio_unitario) * item.cantidad).toFixed(2)}
+          </Text>
         </View>
       </View>
     </View>

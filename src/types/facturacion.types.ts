@@ -67,3 +67,18 @@ export interface ComprobantesEstadisticas {
   por_tipo:           ComprobantesEstadisticasItem[];
   periodo:            { inicio: string; fin: string };
 }
+
+export interface Cotizacion {
+  id:                      number;
+  codigo_cotizacion:       string;
+  fecha_cotizacion:        string;
+  total:                   string | number;
+  estado_cotizacion_id:    number;
+  estado_cotizacion?:      { id: number; nombre: string; color: string };
+  cliente_nombre:          string;
+  cliente_email:           string;
+  numero_documento:        string | null;
+  metodo_pago_preferido:   string | null;
+  observaciones:           string | null;
+  user_cliente?:           { id: number; nombres: string; apellidos: string; email: string };
+}
