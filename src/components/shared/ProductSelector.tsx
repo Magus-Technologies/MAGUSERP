@@ -29,7 +29,7 @@ export function ProductSelector({ query, onQueryChange, isSearching, results, on
 
       {isSearching && <ActivityIndicator className="py-2" color="#458EFF" />}
 
-      {results.length > 0 && (
+      {query.length >= 2 && results.length > 0 && (
         <View className="border border-gray-100 rounded-xl overflow-hidden mb-3">
           {results.map((p, i) => (
             <TouchableOpacity
