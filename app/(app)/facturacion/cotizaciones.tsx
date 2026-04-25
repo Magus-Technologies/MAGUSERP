@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { router } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import { useCotizaciones }       from '@/src/hooks/useCotizaciones';
 import { CotizacionCard }        from '@/src/components/cards/CotizacionCard';
@@ -20,6 +22,7 @@ const ESTADOS = [
 ];
 
 export default function CotizacionesScreen() {
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { cotizaciones, search, setSearch, estado, applyEstado, total, loading, loadingMore, error, loadMore, refresh } = useCotizaciones();
 
   if (loading) return <LoadingSpinner message="Cargando cotizaciones..." />;
@@ -28,7 +31,7 @@ export default function CotizacionesScreen() {
     <View className="flex-1 bg-gray-50">
       {/* Header */}
       <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => router.navigate('/(app)')} className="mr-3">
+        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
           <Ionicons name="menu" size={26} color="#fff" />
         </TouchableOpacity>
         <View className="flex-1">

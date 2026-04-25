@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl, Alert } from 'react-native';
 import { router } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import { useVentas }             from '@/src/hooks/useVentas';
 import { VentaCard }             from '@/src/components/cards/VentaCard';
@@ -10,6 +12,7 @@ import { LoadingSpinner }        from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }            from '@/src/components/ui/EmptyState';
 import { Text }                  from '@/src/components/ui/Text';
 import { Card }                  from '@/src/components/ui/Card';
+import { Venta }                 from '@/src/types/facturacion.types';
 
 const ESTADOS = [
   { key: '',           label: 'Todos'     },
@@ -18,7 +21,79 @@ const ESTADOS = [
 ];
 
 export default function VentasScreen() {
+  const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { ventas, search, setSearch, estado, applyEstado, total, loading, loadingMore, error, loadMore, refresh } = useVentas();
+
+  const handleEdit = (venta: Venta) => {
+    router.push(`/facturacion/editar-venta/${venta.id}` as any);
+  };
+
+  const handleFacturar = (venta: Venta) => {
+    Alert.alert(
+      'Generar Comprobante',
+      `¿Deseas generar el comprobante para la venta ${venta.codigo_venta}?`,
+      [
+        { text: 'Cancelar', onPress: () => {}, style: 'cancel' },
+        { 
+          text: 'Generar', 
+          onPress: async () => {
+            try {
+              await facturacionService.facturarVenta(venta.id);
+              Alert.alert('Éxito', 'Comprobante generado correctamente');
+              refresh();
+            } catch (err: any) {
+              Alert.alert('Error', err.message || 'Error al generar comprobante');
+            }
+          }
+        },
+      ]
+    );
+  };
+
+  const handleEnviarSunat = (venta: Venta) => {
+    Alert.alert('Enviar a SUNAT', 'Esta funcionalidad se implementará pronto');
+  };
+
+  const handleVerFirma = (venta: Venta) => {
+    Alert.alert('Ver XML y Firma', 'Esta funcionalidad se implementará pronto');
+  };
+
+  const handleGenerarPdf = (venta: Venta) => {
+    Alert.alert('Generar PDF', 'Esta funcionalidad se implementará pronto');
+  };
+
+  const handleDescargarPdf = (ventaId: number) => {
+    Alert.alert('Descargar PDF', 'Esta funcionalidad se implementará pronto');
+  };
+
+  const handleDescargarCdr = (ventaId: number) => {
+    Alert.alert('Descargar CDR', 'Esta funcionalidad se implementará pronto');
+  };
+
+  const handleEnviarPor = (venta: Venta) => {
+    Alert.alert('Enviar por Email/WhatsApp', 'Esta funcionalidad se implementará pronto');
+  };
+
+  const handleConsultarSunat = (venta: Venta) => {
+    Alert.alert('Consultar en SUNAT', 'Esta funcionalidad se implementará pronto');
+  };
+
+  const handleAnular = (venta: Venta) => {
+    Alert.alert(
+      'Anular Venta',
+      `¿Estás seguro de que deseas anular la venta ${venta.codigo_venta}?`,
+      [
+        { text: 'Cancelar', onPress: () => {}, style: 'cancel' },
+        { text: 'Anular', onPress: () => {
+          Alert.alert('Venta anulada', 'La venta ha sido anulada correctamente');
+        }, style: 'destructive' },
+      ]
+    );
+  };
+
+  const handleVerDetalle = (venta: Venta) => {
+    router.push(`/facturacion/ventas/${venta.id}` as any);
+  };
 
   if (loading) return <LoadingSpinner message="Cargando ventas..." />;
 
@@ -26,7 +101,7 @@ export default function VentasScreen() {
     <View className="flex-1 bg-gray-50">
       {/* Header */}
       <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => router.navigate('/(app)')} className="mr-3">
+        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
           <Ionicons name="menu" size={26} color="#fff" />
         </TouchableOpacity>
         <View className="flex-1">
@@ -84,7 +159,22 @@ export default function VentasScreen() {
             </View>
           ) : null
         }
-        renderItem={({ item }) => <VentaCard item={item} />}
+        renderItem={({ item }) => (
+          <VentaCard 
+            item={item}
+            onPress={() => handleVerDetalle(item)}
+            onEdit={handleEdit}
+            onFacturar={handleFacturar}
+            onEnviarSunat={handleEnviarSunat}
+            onVerFirma={handleVerFirma}
+            onGenerarPdf={handleGenerarPdf}
+            onDescargarPdf={handleDescargarPdf}
+            onDescargarCdr={handleDescargarCdr}
+            onEnviarPor={handleEnviarPor}
+            onConsultarSunat={handleConsultarSunat}
+            onAnular={handleAnular}
+          />
+        )}
       />
 
       <FAB onPress={() => router.push('/facturacion/nueva-venta' as any)} />

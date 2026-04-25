@@ -1,16 +1,36 @@
-import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { router } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
-import { Text } from '@/src/components/ui/Text';
+import { useNotasDebito } from '@/src/hooks/useNotasDebito';
+import { NotaCard } from '@/src/components/cards/NotaCard';
+import { SearchBar } from '@/src/components/ui/SearchBar';
+import { FAB } from '@/src/components/ui/FAB';
+import { LoadingSpinner } from '@/src/components/ui/LoadingSpinner';
 import { EmptyState } from '@/src/components/ui/EmptyState';
+import { Text } from '@/src/components/ui/Text';
+import { Card } from '@/src/components/ui/Card';
 
-export default function Screen() {
+const ESTADOS = [
+  { key: '', label: 'Todos' },
+  { key: 'BORRADOR', label: 'Borrador' },
+  { key: 'ENVIADO', label: 'Enviado' },
+  { key: 'ACEPTADO', label: 'Aceptado' },
+  { key: 'RECHAZADO', label: 'Rechazado' },
+];
+
+export default function NotasDebitoScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
+  const { notas, search, setSearch, estado, applyEstado, total, loading, loadingMore, error, loadMore, refresh } = useNotasDebito();
+
+  if (loading) return <LoadingSpinner message="Cargando notas de débito..." />;
+
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="bg-azul-oscuro px-4 pt-10 pb-3 flex-row items-center">
+      {/* Header */}
+      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
         <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
           <Ionicons name="menu" size={26} color="#fff" />
         </TouchableOpacity>
@@ -18,8 +38,61 @@ export default function Screen() {
           <Text variant="caption" className="text-white/60">Facturación</Text>
           <Text variant="h4" color="white">Notas de Débito</Text>
         </View>
+        <Text variant="caption" className="text-white/60">{total} registros</Text>
       </View>
-      <EmptyState icon="construct-outline" title="En construcción" message="Esta sección estará disponible próximamente" />
+
+      <SearchBar value={search} onChangeText={setSearch} placeholder="Buscar nota, cliente..." />
+
+      {/* Filtros de estado */}
+      <View className="flex-row px-4 pb-2 gap-2">
+        {ESTADOS.map(e => (
+          <TouchableOpacity
+            key={e.key}
+            onPress={() => applyEstado(e.key)}
+            className={`px-3 py-1.5 rounded-full border ${estado === e.key ? 'bg-azul-oscuro border-azul-oscuro' : 'bg-white border-gray-200'}`}
+          >
+            <Text variant="caption" className={estado === e.key ? 'text-white' : 'text-gray-600'}>
+              {e.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Error */}
+      {error && (
+        <Card className="mx-4 mb-2 p-3 border border-red-100">
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="alert-circle-outline" size={16} color="#EF4444" />
+            <Text variant="caption" color="error">{error}</Text>
+          </View>
+        </Card>
+      )}
+
+      <FlatList
+        data={notas.map(nota => ({ ...nota, tipo: 'debito' as const }))}
+        keyExtractor={item => String(item.id)}
+        contentContainerStyle={{ paddingTop: 8, paddingBottom: 24 }}
+        refreshControl={<RefreshControl refreshing={false} onRefresh={refresh} />}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.3}
+        ListEmptyComponent={
+          <EmptyState
+            icon="document-outline"
+            title="Sin notas de débito"
+            message={search ? 'No hay resultados para tu búsqueda' : 'No hay notas de débito registradas'}
+          />
+        }
+        ListFooterComponent={
+          loadingMore ? (
+            <View className="py-4 items-center">
+              <ActivityIndicator size="small" color="#458EFF" />
+            </View>
+          ) : null
+        }
+        renderItem={({ item }) => <NotaCard item={item} />}
+      />
+
+      <FAB onPress={() => router.push('/facturacion/nueva-nota-debito' as any)} />
     </View>
   );
 }
