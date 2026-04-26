@@ -16,6 +16,7 @@ import { EmptyState }     from '@/src/components/ui/EmptyState';
 import { Text }           from '@/src/components/ui/Text';
 import { SelectGroup }    from '@/src/components/ui/SelectGroup';
 import { ImagePickerComponent } from '@/src/components/ui/ImagePicker';
+import { ScreenHeader }   from '@/src/components/ui/ScreenHeader';
 
 export default function CategoriasScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -73,16 +74,12 @@ export default function CategoriasScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
-          <Ionicons name="menu" size={26} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Almacén</Text>
-          <Text variant="h4" color="white">Categorías</Text>
-        </View>
-        <Text variant="caption" className="text-white/60">{categorias.length} registros</Text>
-      </View>
+      <ScreenHeader
+        title="Categorías"
+        subtitle="Almacén"
+        onMenu={() => navigation.openDrawer()}
+        right={<Text variant="caption" className="text-white/60">{categorias.length} registros</Text>}
+      />
 
       <SearchBar value={search} onChangeText={setSearch} placeholder="Buscar categoría..." />
 

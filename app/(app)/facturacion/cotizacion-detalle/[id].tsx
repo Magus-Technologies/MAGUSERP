@@ -11,7 +11,8 @@ import { Text }   from '../../../../src/components/ui/Text';
 import { Button } from '../../../../src/components/ui/Button';
 import { Card }   from '../../../../src/components/ui/Card';
 import { LoadingSpinner } from '../../../../src/components/ui/LoadingSpinner';
-import { StatusModal } from '../../../../src/components/ui/StatusModal';
+import { StatusModal }    from '../../../../src/components/ui/StatusModal';
+import { ScreenHeader }  from '../../../../src/components/ui/ScreenHeader';
 
 interface CotizacionDetalle {
   id: number;
@@ -79,12 +80,7 @@ export default function CotizacionDetalleScreen() {
   if (!cotizacion) {
     return (
       <View className="flex-1 bg-gray-50">
-        <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-          <TouchableOpacity onPress={() => router.back()} className="mr-3">
-            <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
-          <Text variant="h4" color="white">Cotización</Text>
-        </View>
+        <ScreenHeader title="Cotización" onBack={() => router.back()} />
         <View className="flex-1 items-center justify-center px-4">
           <Ionicons name="alert-circle-outline" size={48} color="#EF4444" />
           <Text variant="h4" className="mt-4 text-center">{error || 'No se encontró la cotización'}</Text>
@@ -117,26 +113,19 @@ export default function CotizacionDetalleScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5">
-        <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center flex-1">
-            <TouchableOpacity onPress={() => router.push('/(app)/facturacion/cotizaciones' as any)} className="mr-3">
-              <Ionicons name="arrow-back" size={24} color="#fff" />
-            </TouchableOpacity>
-            <View className="flex-1">
-              <Text variant="caption" className="text-white/60">Facturación</Text>
-              <Text variant="h4" color="white">{cotizacion.codigo_cotizacion}</Text>
-            </View>
-          </View>
-          <TouchableOpacity 
+      <ScreenHeader
+        title={cotizacion.codigo_cotizacion}
+        subtitle="Facturación"
+        onBack={() => router.push('/(app)/facturacion/cotizaciones' as any)}
+        right={
+          <TouchableOpacity
             onPress={() => router.push(`/(app)/facturacion/editar-cotizacion/${id}` as any)}
             className="p-2 bg-white/20 rounded-lg ml-3"
           >
             <Ionicons name="pencil-outline" size={20} color="#fff" />
           </TouchableOpacity>
-        </View>
-      </View>
+        }
+      />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>

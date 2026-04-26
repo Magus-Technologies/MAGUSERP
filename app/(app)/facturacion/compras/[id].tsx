@@ -8,6 +8,7 @@ import { facturacionService } from '@/src/services/facturacion.service';
 import { Text } from '@/src/components/ui/Text';
 import { Card } from '@/src/components/ui/Card';
 import { Badge } from '@/src/components/ui/Badge';
+import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 
 export default function CompraDetalleScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -72,16 +73,7 @@ export default function CompraDetalleScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
-          <Ionicons name="menu" size={26} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Detalle de Compra</Text>
-          <Text variant="h4" color="white">{compra.codigo_compra}</Text>
-        </View>
-      </View>
+      <ScreenHeader title={compra.codigo_compra} subtitle="Detalle de Compra" onMenu={() => navigation.openDrawer()} />
 
       <ScrollView className="flex-1 px-4 py-4">
         {/* Estado */}

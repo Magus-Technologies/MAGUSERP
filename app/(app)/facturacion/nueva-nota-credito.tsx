@@ -2,19 +2,24 @@ import React, { useState } from 'react';
 import {
   View, ScrollView, TouchableOpacity,
   KeyboardAvoidingView, Platform,
-  TextInput, ActivityIndicator, Picker
+  TextInput, ActivityIndicator
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useNotaCreditoForm } from '../../../src/hooks/useNotaCreditoForm';
 import { Text } from '../../../src/components/ui/Text';
 import { Button } from '../../../src/components/ui/Button';
 import { Card } from '../../../src/components/ui/Card';
-import { StatusModal } from '../../../src/components/ui/StatusModal';
+import { StatusModal }  from '../../../src/components/ui/StatusModal';
+import { ScreenHeader } from '../../../src/components/ui/ScreenHeader';
 
 export default function NuevaNotaCreditoScreen() {
   const router = useRouter();
+  const { bottom } = useSafeAreaInsets();
   const form = useNotaCreditoForm(() => {});
+
   const {
     comprobanteReferencia, busquedaComprobante, setBusquedaComprobante,
     buscarComprobante, buscando,
@@ -34,19 +39,10 @@ export default function NuevaNotaCreditoScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => router.back()} className="mr-3">
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Facturación</Text>
-          <Text variant="h4" color="white">Nota de Crédito</Text>
-        </View>
-      </View>
+      <ScreenHeader title="Nota de Crédito" subtitle="Facturación" onBack={() => router.back()} />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: Math.max(bottom, 16) + 24 }}>
           <View className="p-4 gap-4">
 
             {/* Info */}

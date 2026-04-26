@@ -4,15 +4,24 @@ import { apiClient } from '../api/client';
 import { Cliente } from '../types/cliente.types';
 
 export interface VentaItem {
-  producto_id: number;
-  nombre: string;
-  codigo: string;
-  cantidad: number;
-  precio_unitario: number;
+  producto_id:         number;
+  nombre:              string;
+  codigo:              string;
+  cantidad:            number;
+  precio_unitario:     number;
+  descuento_unitario:  number;
   tipo_afectacion_igv: string;
-  unidad_medida: string;
-  descuento?: number;
+  unidad_medida:       string;
 }
+
+const EMPTY_CLIENTE: Cliente = {
+  tipo_documento:   '1',
+  numero_documento: '',
+  razon_social:     '',
+  direccion:        '',
+  email:            '',
+  telefono:         '',
+};
 
 export function useEditarVenta(ventaId: number, onSuccess?: () => void) {
   const [venta, setVenta] = useState<any>(null);
@@ -23,7 +32,7 @@ export function useEditarVenta(ventaId: number, onSuccess?: () => void) {
   const [tipoComprobante, setTipoComprobante] = useState('03');
   const [series, setSeries] = useState<any[]>([]);
   const [serieId, setSerieId] = useState<number | null>(null);
-  const [clienteData, setClienteData] = useState<Cliente | null>(null);
+  const [clienteData, setClienteData] = useState<Cliente>({ ...EMPTY_CLIENTE });
   const [items, setItems] = useState<VentaItem[]>([]);
   const [descuentoTotal, setDescuentoTotal] = useState(0);
   const [metodoPago, setMetodoPago] = useState('CONTADO');
@@ -64,7 +73,7 @@ export function useEditarVenta(ventaId: number, onSuccess?: () => void) {
         precio_unitario: d.precio_unitario,
         tipo_afectacion_igv: d.tipo_afectacion_igv || '10',
         unidad_medida: d.unidad_medida || 'NIU',
-        descuento: d.descuento || 0,
+        descuento_unitario: d.descuento_unitario || d.descuento || 0,
       })) || []);
       setDescuentoTotal(ventaData.descuento_total || 0);
       setMetodoPago(ventaData.metodo_pago || 'CONTADO');
@@ -90,7 +99,7 @@ export function useEditarVenta(ventaId: number, onSuccess?: () => void) {
   // Buscar cliente
   const buscarCliente = useCallback(async (query?: string) => {
     if (!query || !query.trim()) {
-      setClienteData(null);
+      setClienteData({ ...EMPTY_CLIENTE });
       setClienteError('');
       return;
     }
@@ -166,7 +175,7 @@ export function useEditarVenta(ventaId: number, onSuccess?: () => void) {
           producto_id: item.producto_id,
           cantidad: Number(item.cantidad),
           precio_unitario: Number(item.precio_unitario),
-          descuento_unitario: Number(item.descuento || 0),
+          descuento_unitario: Number(item.descuento_unitario || 0),
         })),
         descuento_total: Number(descuentoTotal),
         metodo_pago: metodoPago,

@@ -19,7 +19,8 @@ import { ProductoCard }    from '@/src/components/cards/ProductoCard';
 import { SelectGroup }     from '@/src/components/ui/SelectGroup';
 import { SearchableSelect } from '@/src/components/ui/SearchableSelect';
 import { ImagePickerComponent } from '@/src/components/ui/ImagePicker';
-import { StatusModal } from '@/src/components/ui/StatusModal';
+import { StatusModal }  from '@/src/components/ui/StatusModal';
+import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 
 export default function ProductosScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -82,16 +83,12 @@ export default function ProductosScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <View className="bg-azul-oscuro px-4 pt-10 pb-3 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
-          <Ionicons name="menu" size={26} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Almacén</Text>
-          <Text variant="h4" color="white">Productos</Text>
-        </View>
-        <Text variant="caption" className="text-white/60">{list.total} registros</Text>
-      </View>
+      <ScreenHeader
+        title="Productos"
+        subtitle="Almacén"
+        onMenu={() => navigation.openDrawer()}
+        right={<Text variant="caption" className="text-white/60">{list.total} registros</Text>}
+      />
 
       <SearchBar value={list.search} onChangeText={list.setSearch} placeholder="Buscar producto..." />
 

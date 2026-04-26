@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, ScrollView, RefreshControl, TouchableOpacity, Image } from 'react-native';
+import { View, ScrollView, RefreshControl, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,6 +14,7 @@ import { Text }             from '@/src/components/ui/Text';
 import { LoadingSpinner }   from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }       from '@/src/components/ui/EmptyState';
 import { StockCriticoItem } from '@/src/components/dashboard/StockCriticoItem';
+import { ScreenHeader }     from '@/src/components/ui/ScreenHeader';
 
 export default function DashboardScreen() {
   const { user } = useAuth();
@@ -50,21 +51,18 @@ export default function DashboardScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
-          <Ionicons name="menu" size={26} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Bienvenido,</Text>
-          <Text variant="h4" color="white">{user?.name ?? 'Usuario'}</Text>
-        </View>
-        <Image
-          source={require('@/assets/images/logo3.png')}
-          style={{ width: 90, height: 30 }}
-          resizeMode="contain"
-        />
-      </View>
+      <ScreenHeader
+        title={user?.name ?? 'Usuario'}
+        subtitle="Bienvenido,"
+        onMenu={() => navigation.openDrawer()}
+        right={
+          <Image
+            source={require('@/assets/images/logo3.png')}
+            style={{ width: 90, height: 30 }}
+            resizeMode="contain"
+          />
+        }
+      />
 
       <ScrollView
         className="flex-1"

@@ -9,6 +9,7 @@ import { Text } from '@/src/components/ui/Text';
 import { Card } from '@/src/components/ui/Card';
 import { Badge } from '@/src/components/ui/Badge';
 import { formatCurrency, formatDate } from '@/src/utils/formatters';
+import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 
 export default function VentaDetalleScreen() {
   const navigation = useNavigation<DrawerNavigationProp<any>>();
@@ -52,16 +53,7 @@ export default function VentaDetalleScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => router.push('/facturacion/ventas' as any)} className="mr-3">
-          <Ionicons name="chevron-back" size={26} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Detalle de Venta</Text>
-          <Text variant="h4" color="white">{venta.codigo_venta}</Text>
-        </View>
-      </View>
+      <ScreenHeader title={venta.codigo_venta} subtitle="Detalle de Venta" onBack={() => router.push('/facturacion/ventas' as any)} />
 
       <ScrollView className="flex-1 px-4 py-4">
         {/* Estado */}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -39,6 +40,7 @@ const MENU: MenuItem[] = [
 export function DrawerContent({ navigation }: DrawerContentComponentProps) {
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { top, bottom } = useSafeAreaInsets();
   const [expanded, setExpanded] = useState<string[]>([]);
 
   const toggle = (id: string) =>
@@ -92,7 +94,7 @@ export function DrawerContent({ navigation }: DrawerContentComponentProps) {
   return (
     <View className="flex-1 bg-white">
       {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-6">
+      <View className="bg-azul-oscuro px-4 pb-6" style={{ paddingTop: Math.max(top, 16) }}>
         <View className="flex-row items-center">
           <View className="w-10 h-10 rounded-full bg-primary-500 items-center justify-center">
             <Text color="white" className="font-bold text-base">
@@ -114,7 +116,7 @@ export function DrawerContent({ navigation }: DrawerContentComponentProps) {
       </ScrollView>
 
       {/* Footer */}
-      <View className="border-t border-gray-100 pb-6">
+      <View className="border-t border-gray-100" style={{ paddingBottom: Math.max(bottom, 16) }}>
         <TouchableOpacity
           onPress={handleLogout}
           className="flex-row items-center px-4 py-4 active:bg-red-50"

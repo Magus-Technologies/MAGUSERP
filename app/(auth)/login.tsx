@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, KeyboardAvoidingView, Platform, ScrollView, Alert, TouchableOpacity } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useAuth } from '@/src/store/AuthContext';
 import { storage, StorageKeys } from '@/src/utils/storage';
@@ -10,6 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function LoginScreen() {
   const { login } = useAuth();
+  const { top } = useSafeAreaInsets();
   const [email,      setEmail]      = useState('');
   const [password,   setPassword]   = useState('');
   const [rememberMe, setRememberMe] = useState(false);
@@ -68,7 +70,7 @@ export default function LoginScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header con logo */}
-        <View className="bg-neutral items-center justify-center pt-16 pb-10">
+        <View className="bg-neutral items-center justify-center pb-10" style={{ paddingTop: Math.max(top, 24) + 20 }}>
           <Image
             source={require('@/assets/images/logo3.png')}
             style={{ width: 180, height: 60 }}

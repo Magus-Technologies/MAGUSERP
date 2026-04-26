@@ -12,6 +12,7 @@ import { LoadingSpinner }        from '@/src/components/ui/LoadingSpinner';
 import { EmptyState }            from '@/src/components/ui/EmptyState';
 import { Text }                  from '@/src/components/ui/Text';
 import { Card }                  from '@/src/components/ui/Card';
+import { ScreenHeader }          from '@/src/components/ui/ScreenHeader';
 
 const ESTADOS = [
   { key: '',          label: 'Todos'      },
@@ -29,17 +30,12 @@ export default function CotizacionesScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
-          <Ionicons name="menu" size={26} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Facturación</Text>
-          <Text variant="h4" color="white">Cotizaciones</Text>
-        </View>
-        <Text variant="caption" className="text-white/60">{total} registros</Text>
-      </View>
+      <ScreenHeader
+        title="Cotizaciones"
+        subtitle="Facturación"
+        onMenu={() => navigation.openDrawer()}
+        right={<Text variant="caption" className="text-white/60">{total} registros</Text>}
+      />
 
       <SearchBar value={search} onChangeText={setSearch} placeholder="Buscar cotización, cliente..." />
 

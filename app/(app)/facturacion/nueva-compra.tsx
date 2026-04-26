@@ -4,6 +4,7 @@ import {
   KeyboardAvoidingView, Platform,
   Text as NativeText
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCompraForm, CompraItem } from '../../../src/hooks/useCompraForm';
@@ -18,11 +19,13 @@ import { ClienteForm } from '../../../src/components/shared/ClienteForm';
 import { ProductSelector } from '../../../src/components/shared/ProductSelector';
 import { VentaItemCard } from '../../../src/components/facturacion/VentaItemCard';
 import { VentaSummary } from '../../../src/components/facturacion/VentaSummary';
+import { ScreenHeader } from '../../../src/components/ui/ScreenHeader';
 
 interface ProductoResult { id: number; codigo: string; nombre: string; precio_venta: number; stock: number }
 
 export default function NuevaCompraScreen() {
   const router = useRouter();
+  const { bottom } = useSafeAreaInsets();
   const form = useCompraForm(() => {});
   const {
     clienteData, setClienteData, buscarCliente, searchingCliente, clienteError,
@@ -64,19 +67,10 @@ export default function NuevaCompraScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => router.back()} className="mr-3">
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Facturación</Text>
-          <Text variant="h4" color="white">Registrar Compra</Text>
-        </View>
-      </View>
+      <ScreenHeader title="Registrar Compra" subtitle="Facturación" onBack={() => router.back()} />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: Math.max(bottom, 16) + 24 }}>
           <View className="p-4 gap-4">
 
             {/* SECCION DE CONFIGURACION DE COMPRA */}

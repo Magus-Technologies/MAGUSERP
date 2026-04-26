@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import { View, ScrollView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +15,7 @@ import { SectionHeader }   from '@/src/components/ui/SectionHeader';
 import { Card }            from '@/src/components/ui/Card';
 import { Text }            from '@/src/components/ui/Text';
 import { LoadingSpinner }  from '@/src/components/ui/LoadingSpinner';
+import { ScreenHeader }    from '@/src/components/ui/ScreenHeader';
 
 type EstadoBadgeProps = { label: string; count: number; color: string };
 function EstadoBadge({ label, count, color }: EstadoBadgeProps) {
@@ -68,19 +69,12 @@ export default function FacturacionDashboardScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
-          <Ionicons name="menu" size={26} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Facturación</Text>
-          <Text variant="h4" color="white">Dashboard</Text>
-        </View>
-        <View className="bg-white/20 px-3 py-1 rounded-full">
-          <Text variant="caption" color="white">Este mes</Text>
-        </View>
-      </View>
+      <ScreenHeader
+        title="Dashboard"
+        subtitle="Facturación"
+        onMenu={() => navigation.openDrawer()}
+        right={<View className="bg-white/20 px-3 py-1 rounded-full"><Text variant="caption" color="white">Este mes</Text></View>}
+      />
 
       <ScrollView
         className="flex-1"

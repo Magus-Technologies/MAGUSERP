@@ -4,6 +4,7 @@ import {
   KeyboardAvoidingView, Platform,
   ActivityIndicator
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { apiClient } from '../../../src/api/client';
@@ -13,7 +14,8 @@ import { Button } from '../../../src/components/ui/Button';
 import { Card }   from '../../../src/components/ui/Card';
 import { Input }  from '../../../src/components/ui/Input';
 import { DatePicker } from '../../../src/components/ui/DatePicker';
-import { StatusModal } from '../../../src/components/ui/StatusModal';
+import { StatusModal }  from '../../../src/components/ui/StatusModal';
+import { ScreenHeader } from '../../../src/components/ui/ScreenHeader';
 import { Cliente } from '../../../src/types/cliente.types';
 
 // Componentes Compartidos
@@ -39,6 +41,7 @@ interface CotizacionItem {
 
 export default function NuevaCotizacionScreen() {
   const router = useRouter();
+  const { bottom } = useSafeAreaInsets();
 
   // Estado del formulario
   const [clienteData, setClienteData] = useState<Cliente>({
@@ -203,19 +206,10 @@ export default function NuevaCotizacionScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => router.push('/(app)/facturacion/cotizaciones' as any)} className="mr-3">
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Facturación</Text>
-          <Text variant="h4" color="white">Nueva Cotización</Text>
-        </View>
-      </View>
+      <ScreenHeader title="Nueva Cotización" subtitle="Facturación" onBack={() => router.push('/(app)/facturacion/cotizaciones' as any)} />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: Math.max(bottom, 16) + 24 }}>
           <View className="p-4 gap-4">
             
             {/* Información del Cliente */}

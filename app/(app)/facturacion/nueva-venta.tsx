@@ -4,6 +4,7 @@ import {
   KeyboardAvoidingView, Platform,
   Text as NativeText
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useVentaForm, VentaItem } from '../../../src/hooks/useVentaForm';
@@ -18,6 +19,7 @@ import { ClienteForm }     from '../../../src/components/shared/ClienteForm';
 import { ProductSelector } from '../../../src/components/shared/ProductSelector';
 import { VentaItemCard }   from '../../../src/components/facturacion/VentaItemCard';
 import { VentaSummary }    from '../../../src/components/facturacion/VentaSummary';
+import { ScreenHeader }    from '../../../src/components/ui/ScreenHeader';
 
 interface ProductoResult { id: number; codigo: string; nombre: string; precio_venta: number; stock: number }
 
@@ -29,6 +31,7 @@ const TIPOS_DOC_VENTA = [
 
 export default function NuevaVentaScreen() {
   const router = useRouter();
+  const { bottom } = useSafeAreaInsets();
   const form = useVentaForm(() => {});
   const { 
     tipoComprobante, setTipoComprobante, series, serieId, setSerieId, loadSeries,
@@ -74,19 +77,10 @@ export default function NuevaVentaScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => router.back()} className="mr-3">
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Facturación</Text>
-          <Text variant="h4" color="white">Registrar Venta</Text>
-        </View>
-      </View>
+      <ScreenHeader title="Registrar Venta" subtitle="Facturación" onBack={() => router.back()} />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: Math.max(bottom, 16) + 24 }}>
           <View className="p-4 gap-4">
             
             {/* SECCION DE CONFIGURACION DE DOCUMENTO - NATIVO PURO PARA EVITAR CRASH DE NAVEGACION */}

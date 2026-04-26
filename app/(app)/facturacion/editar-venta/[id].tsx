@@ -4,6 +4,7 @@ import {
   KeyboardAvoidingView, Platform,
   Text as NativeText, ActivityIndicator
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useEditarVenta, VentaItem } from '@/src/hooks/useEditarVenta';
@@ -11,7 +12,8 @@ import { apiClient } from '@/src/api/client';
 import { Text }   from '@/src/components/ui/Text';
 import { Button } from '@/src/components/ui/Button';
 import { Card }   from '@/src/components/ui/Card';
-import { StatusModal } from '@/src/components/ui/StatusModal';
+import { StatusModal }  from '@/src/components/ui/StatusModal';
+import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 
 // Componentes Compartidos
 import { ClienteForm }     from '@/src/components/shared/ClienteForm';
@@ -23,6 +25,7 @@ interface ProductoResult { id: number; codigo: string; nombre: string; precio_ve
 
 export default function EditarVentaScreen() {
   const router = useRouter();
+  const { bottom } = useSafeAreaInsets();
   const { id } = useLocalSearchParams();
   const ventaId = Number(id);
 
@@ -66,9 +69,9 @@ export default function EditarVentaScreen() {
   };
 
   const handleAddProducto = (p: ProductoResult) => {
-    addItem({ 
+    addItem({
        producto_id: p.id, nombre: p.nombre, codigo: p.codigo, cantidad: 1, precio_unitario: p.precio_venta,
-       tipo_afectacion_igv: '10', unidad_medida: 'NIU'
+       descuento_unitario: 0, tipo_afectacion_igv: '10', unidad_medida: 'NIU'
     });
     setProductoQuery('');
     setProductoResults([]);
@@ -92,19 +95,10 @@ export default function EditarVentaScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      {/* Header */}
-      <View className="bg-azul-oscuro px-4 pt-14 pb-5 flex-row items-center">
-        <TouchableOpacity onPress={() => router.push('/facturacion/ventas' as any)} className="mr-3">
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <View className="flex-1">
-          <Text variant="caption" className="text-white/60">Facturación</Text>
-          <Text variant="h4" color="white">Editar Venta</Text>
-        </View>
-      </View>
+      <ScreenHeader title="Editar Venta" subtitle="Facturación" onBack={() => router.push('/facturacion/ventas' as any)} />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: Math.max(bottom, 16) + 24 }}>
           <View className="p-4 gap-4">
             
             {/* SECCION DE CONFIGURACION DE DOCUMENTO */}

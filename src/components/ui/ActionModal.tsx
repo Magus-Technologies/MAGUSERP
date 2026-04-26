@@ -3,6 +3,7 @@ import {
   View, Modal, TouchableOpacity,
   KeyboardAvoidingView, Platform, ScrollView,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { Text }   from './Text';
 import { Button } from './Button';
@@ -43,6 +44,7 @@ export function ActionModal({
   visible, action, title, message, error,
   onConfirm, onCancel, loading, children,
 }: Props) {
+  const { bottom } = useSafeAreaInsets();
   const icon = iconMap[action];
 
   if (action === 'delete') {
@@ -86,7 +88,7 @@ export function ActionModal({
       >
         <TouchableOpacity activeOpacity={1} onPress={onCancel} className="flex-1 bg-black/30" />
 
-        <View className="bg-white rounded-t-3xl px-5 pt-4 pb-8">
+        <View className="bg-white rounded-t-3xl px-5 pt-4" style={{ paddingBottom: Math.max(bottom, 16) + 8 }}>
           <View className="w-10 h-1 bg-gray-200 rounded-full self-center mb-4" />
 
           <View className="flex-row items-center mb-5">
