@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, ScrollView, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -31,6 +32,7 @@ function EstadoBadge({ label, count, color }: EstadoBadgeProps) {
 }
 
 export default function FacturacionDashboardScreen() {
+  const router = useRouter();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
 
   const [ventas,       setVentas]       = useState<VentasEstadisticas | null>(null);
@@ -72,7 +74,7 @@ export default function FacturacionDashboardScreen() {
       <ScreenHeader
         title="Dashboard"
         subtitle="Facturación"
-        onMenu={() => navigation.openDrawer()}
+        onBack={() => router.canGoBack() ? router.back() : router.replace('/(app)')}
         right={<View className="bg-white/20 px-3 py-1 rounded-full"><Text variant="caption" color="white">Este mes</Text></View>}
       />
 

@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { View, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -17,6 +18,7 @@ import { ImagePickerComponent } from '@/src/components/ui/ImagePicker';
 import { ScreenHeader }   from '@/src/components/ui/ScreenHeader';
 
 export default function MarcasScreen() {
+  const router = useRouter();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { marcas, filtered, search, setSearch, loading, saving, deleting, create, update, remove } = useMarcas();
 
@@ -73,7 +75,7 @@ export default function MarcasScreen() {
       <ScreenHeader
         title="Marcas"
         subtitle="Almacén"
-        onMenu={() => navigation.openDrawer()}
+        onBack={() => router.canGoBack() ? router.back() : router.replace('/(app)')}
         right={<Text variant="caption" className="text-white/60">{marcas.length} registros</Text>}
       />
 

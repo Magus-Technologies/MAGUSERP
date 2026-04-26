@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,6 +23,7 @@ const ESTADOS = [
 ];
 
 export default function CotizacionesScreen() {
+  const router = useRouter();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { cotizaciones, search, setSearch, estado, applyEstado, total, loading, loadingMore, error, loadMore, refresh } = useCotizaciones();
 
@@ -33,7 +34,7 @@ export default function CotizacionesScreen() {
       <ScreenHeader
         title="Cotizaciones"
         subtitle="Facturación"
-        onMenu={() => navigation.openDrawer()}
+        onBack={() => router.canGoBack() ? router.back() : router.replace('/(app)')}
         right={<Text variant="caption" className="text-white/60">{total} registros</Text>}
       />
 

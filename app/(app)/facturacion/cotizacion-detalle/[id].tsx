@@ -80,7 +80,7 @@ export default function CotizacionDetalleScreen() {
   if (!cotizacion) {
     return (
       <View className="flex-1 bg-gray-50">
-        <ScreenHeader title="Cotización" onBack={() => router.back()} />
+        <ScreenHeader title="Cotización" onBack={() => router.canGoBack() ? router.back() : router.replace('/(app)')} />
         <View className="flex-1 items-center justify-center px-4">
           <Ionicons name="alert-circle-outline" size={48} color="#EF4444" />
           <Text variant="h4" className="mt-4 text-center">{error || 'No se encontró la cotización'}</Text>

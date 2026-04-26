@@ -16,7 +16,8 @@ interface MenuItem {
 }
 
 const MENU: MenuItem[] = [
-  { id: 'dashboard', label: 'Dashboard',   icon: 'home-outline',      route: '/(app)' },
+  { id: 'inicio',        label: 'Inicio',         icon: 'home-outline',      route: '/(app)'                     },
+  { id: 'estadisticas',  label: 'Estadísticas',   icon: 'stats-chart',       route: '/(app)/estadisticas'        },
   {
     id: 'almacen', label: 'Almacén', icon: 'cube-outline',
     children: [
@@ -28,11 +29,11 @@ const MENU: MenuItem[] = [
   {
     id: 'facturacion', label: 'Facturación', icon: 'receipt-outline',
     children: [
-      { id: 'fact-dashboard',    label: 'Dashboard',          icon: 'home-outline',           route: '/(app)/facturacion/dashboard'    },
-      { id: 'ventas',            label: 'Ventas',             icon: 'cash-outline',           route: '/(app)/facturacion/ventas'       },
-      { id: 'cotizaciones',      label: 'Cotizaciones',       icon: 'document-outline',       route: '/(app)/facturacion/cotizaciones' },
-      { id: 'notas-credito',     label: 'Notas de Crédito',  icon: 'add-circle-outline',     route: '/(app)/facturacion/notas-credito'},
-      { id: 'notas-debito',      label: 'Notas de Débito',   icon: 'remove-circle-outline',  route: '/(app)/facturacion/notas-debito' },
+      { id: 'fact-dashboard', label: 'Dashboard',         icon: 'home-outline',          route: '/(app)/facturacion/dashboard'    },
+      { id: 'ventas',         label: 'Ventas',            icon: 'cash-outline',          route: '/(app)/facturacion/ventas'       },
+      { id: 'cotizaciones',   label: 'Cotizaciones',      icon: 'document-outline',      route: '/(app)/facturacion/cotizaciones' },
+      { id: 'notas-credito',  label: 'Notas de Crédito', icon: 'add-circle-outline',    route: '/(app)/facturacion/notas-credito'},
+      { id: 'notas-debito',   label: 'Notas de Débito',  icon: 'remove-circle-outline', route: '/(app)/facturacion/notas-debito' },
     ],
   },
 ];

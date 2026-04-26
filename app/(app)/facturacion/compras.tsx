@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-import { router } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
@@ -36,6 +36,7 @@ const ESTADO_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 export default function ComprasScreen() {
+  const router = useRouter();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { compras, search, setSearch, estado, applyEstado, total, loading, loadingMore, error, loadMore, refresh } = useCompras();
 
@@ -46,7 +47,7 @@ export default function ComprasScreen() {
       <ScreenHeader
         title="Mis Compras"
         subtitle="Facturación"
-        onMenu={() => navigation.openDrawer()}
+        onBack={() => router.canGoBack() ? router.back() : router.replace('/(app)')}
         right={<Text variant="caption" className="text-white/60">{total} registros</Text>}
       />
 

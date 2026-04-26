@@ -11,9 +11,6 @@ export default function Screen() {
   return (
     <View className="flex-1 bg-gray-50">
       <View className="bg-azul-oscuro px-4 pt-10 pb-3 flex-row items-center">
-        <TouchableOpacity onPress={() => navigation.openDrawer()} className="mr-3">
-          <Ionicons name="menu" size={26} color="#fff" />
-        </TouchableOpacity>
         <View className="flex-1">
           <Text variant="caption" className="text-white/60">Facturación</Text>
           <Text variant="h4" color="white">Series</Text>

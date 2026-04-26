@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, TouchableOpacity, ActivityIndicator, Alert, TextInput, Modal } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,6 +11,7 @@ import { Badge } from '@/src/components/ui/Badge';
 import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
 
 export default function CompraDetalleScreen() {
+  const router = useRouter();
   const navigation = useNavigation<DrawerNavigationProp<any>>();
   const { id } = useLocalSearchParams();
   const [compra, setCompra] = useState<any>(null);
@@ -73,7 +74,7 @@ export default function CompraDetalleScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <ScreenHeader title={compra.codigo_compra} subtitle="Detalle de Compra" onMenu={() => navigation.openDrawer()} />
+      <ScreenHeader title={compra.codigo_compra} subtitle="Detalle de Compra" onBack={() => router.canGoBack() ? router.back() : router.replace('/(app)')} />
 
       <ScrollView className="flex-1 px-4 py-4">
         {/* Estado */}

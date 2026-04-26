@@ -67,7 +67,7 @@ export default function NuevaCompraScreen() {
 
   return (
     <View className="flex-1 bg-gray-50">
-      <ScreenHeader title="Registrar Compra" subtitle="Facturación" onBack={() => router.back()} />
+      <ScreenHeader title="Registrar Compra" subtitle="Facturación" onBack={() => router.canGoBack() ? router.back() : router.replace('/(app)')} />
 
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: Math.max(bottom, 16) + 24 }}>
