@@ -16,15 +16,17 @@ const MENU: {
   color:  string;
   route:  string;
 }[] = [
-  { label: 'Dashboard',           icon: 'stats-chart',         color: '#3B82F6', route: '/(app)/estadisticas'              },
-  { label: 'Dash. Facturación',   icon: 'receipt-outline',     color: '#6366F1', route: '/(app)/facturacion/dashboard'     },
-  { label: 'Productos',           icon: 'cube-outline',        color: '#10B981', route: '/(app)/almacen/productos'         },
-  { label: 'Categorías',          icon: 'grid-outline',        color: '#8B5CF6', route: '/(app)/almacen/categorias'        },
-  { label: 'Marcas',              icon: 'bookmark-outline',    color: '#F59E0B', route: '/(app)/almacen/marcas'            },
-  { label: 'Ventas',              icon: 'cart-outline',        color: '#EF4444', route: '/(app)/facturacion/ventas'        },
-  { label: 'Cotizaciones',        icon: 'document-text-outline',color: '#EC4899', route: '/(app)/facturacion/cotizaciones' },
-  { label: 'Nota de Crédito',    icon: 'arrow-undo-outline',  color: '#14B8A6', route: '/(app)/facturacion/notas-credito' },
-  { label: 'Nota de Débito',     icon: 'arrow-redo-outline',  color: '#F97316', route: '/(app)/facturacion/notas-debito'  },
+  { label: 'Dashboard',           icon: 'stats-chart',          color: '#3B82F6', route: '/(app)/estadisticas'              },
+  { label: 'Dash. Facturación',   icon: 'receipt-outline',      color: '#6366F1', route: '/(app)/facturacion/dashboard'     },
+  { label: 'Pedidos',             icon: 'bag-handle-outline',   color: '#0EA5E9', route: '/(app)/pedidos'                   },
+  { label: 'Clientes',            icon: 'people-outline',       color: '#22C55E', route: '/(app)/clientes'                  },
+  { label: 'Productos',           icon: 'cube-outline',         color: '#10B981', route: '/(app)/almacen/productos'         },
+  { label: 'Categorías',          icon: 'grid-outline',         color: '#8B5CF6', route: '/(app)/almacen/categorias'        },
+  { label: 'Marcas',              icon: 'bookmark-outline',     color: '#F59E0B', route: '/(app)/almacen/marcas'            },
+  { label: 'Ventas',              icon: 'cart-outline',         color: '#EF4444', route: '/(app)/facturacion/ventas'        },
+  { label: 'Cotizaciones',        icon: 'document-text-outline',color: '#EC4899', route: '/(app)/facturacion/cotizaciones'  },
+  { label: 'Nota de Crédito',    icon: 'arrow-undo-outline',   color: '#14B8A6', route: '/(app)/facturacion/notas-credito' },
+  { label: 'Nota de Débito',     icon: 'arrow-redo-outline',   color: '#F97316', route: '/(app)/facturacion/notas-debito'  },
 ];
 
 export default function HomeMenuScreen() {

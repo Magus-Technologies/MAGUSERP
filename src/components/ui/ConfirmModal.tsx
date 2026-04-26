@@ -5,15 +5,27 @@ import { Text }   from './Text';
 import { Button } from './Button';
 
 interface Props {
-  visible:    boolean;
-  title:      string;
-  message:    string;
-  onConfirm:  () => void;
-  onCancel:   () => void;
-  loading?:   boolean;
+  visible:        boolean;
+  title:          string;
+  message:        string;
+  onConfirm:      () => void;
+  onCancel:       () => void;
+  loading?:       boolean;
+  confirmLabel?:  string;
+  confirmVariant?: 'danger' | 'primary' | 'secondary' | 'ghost';
+  iconName?:      keyof typeof Ionicons.glyphMap;
+  iconColor?:     string;
+  iconBg?:        string;
 }
 
-export function ConfirmModal({ visible, title, message, onConfirm, onCancel, loading }: Props) {
+export function ConfirmModal({
+  visible, title, message, onConfirm, onCancel, loading,
+  confirmLabel  = 'Eliminar',
+  confirmVariant = 'danger',
+  iconName      = 'trash-outline',
+  iconColor     = '#EF4444',
+  iconBg        = '#FEF2F2',
+}: Props) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
       <TouchableOpacity
@@ -22,8 +34,8 @@ export function ConfirmModal({ visible, title, message, onConfirm, onCancel, loa
         className="flex-1 bg-black/40 items-center justify-center px-8"
       >
         <TouchableOpacity activeOpacity={1} className="bg-white rounded-2xl w-full p-6">
-          <View className="w-12 h-12 bg-red-50 rounded-full items-center justify-center mb-4 self-center">
-            <Ionicons name="trash-outline" size={22} color="#EF4444" />
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: iconBg, alignItems: 'center', justifyContent: 'center', marginBottom: 16, alignSelf: 'center' }}>
+            <Ionicons name={iconName} size={22} color={iconColor} />
           </View>
           <Text variant="h4" className="text-center mb-2">{title}</Text>
           <Text variant="body" color="muted" className="text-center mb-6">{message}</Text>
@@ -31,8 +43,8 @@ export function ConfirmModal({ visible, title, message, onConfirm, onCancel, loa
             <Button variant="secondary" size="md" onPress={onCancel} style={{ flex: 1 }}>
               Cancelar
             </Button>
-            <Button variant="danger" size="md" onPress={onConfirm} loading={loading} style={{ flex: 1 }}>
-              Eliminar
+            <Button variant={confirmVariant} size="md" onPress={onConfirm} loading={loading} style={{ flex: 1 }}>
+              {confirmLabel}
             </Button>
           </View>
         </TouchableOpacity>

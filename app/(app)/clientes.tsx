@@ -6,9 +6,10 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { apiClient } from '@/src/api/client';
-import { Text }        from '@/src/components/ui/Text';
-import { Card }        from '@/src/components/ui/Card';
-import { ScreenHeader } from '@/src/components/ui/ScreenHeader';
+import { Text }          from '@/src/components/ui/Text';
+import { Card }          from '@/src/components/ui/Card';
+import { ScreenHeader }  from '@/src/components/ui/ScreenHeader';
+import { ConfirmModal }  from '@/src/components/ui/ConfirmModal';
 
 // ── Tipos ──────────────────────────────────────────────────────────────────────
 interface Cliente {
@@ -19,8 +20,8 @@ interface Cliente {
   email:            string;
   telefono?:        string;
   numero_documento?: string;
-  tipo_documento?:  string;
-  estado:           string;
+  tipo_documento?:  string | { id: number; nombre: string };
+  estado:           boolean | string;
   fecha_registro?:  string;
 }
 
@@ -35,14 +36,22 @@ function formatFecha(iso?: string) {
   catch { return iso; }
 }
 
+function isActivo(estado: boolean | string) {
+  return estado === true ||
+    (typeof estado === 'string' && (estado.toLowerCase() === 'activo' || estado === '1' || estado === 'true'));
+}
+
 const AVATAR_COLORS = ['#3B82F6','#10B981','#8B5CF6','#F59E0B','#EF4444','#EC4899','#14B8A6'];
 function avatarColor(id: number) { return AVATAR_COLORS[id % AVATAR_COLORS.length]; }
 
 // ── Card de cliente ────────────────────────────────────────────────────────────
-function ClienteCard({ item }: { item: Cliente }) {
+function ClienteCard({ item, onToggle }: { item: Cliente; onToggle: (c: Cliente) => void }) {
   const nombre = item.nombre_completo || `${item.nombres ?? ''} ${item.apellidos ?? ''}`.trim() || '—';
-  const activo = item.estado?.toLowerCase() === 'activo' || item.estado === '1' || item.estado === 'true';
+  const activo = isActivo(item.estado);
   const color  = avatarColor(item.id_cliente);
+  const tipoDoc = typeof item.tipo_documento === 'object'
+    ? item.tipo_documento?.nombre
+    : item.tipo_documento;
 
   return (
     <Card className="p-4 mb-3">
@@ -75,11 +84,27 @@ function ClienteCard({ item }: { item: Cliente }) {
             {item.numero_documento && (
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <Ionicons name="id-card-outline" size={11} color="#9CA3AF" />
-                <Text variant="caption" color="muted">{item.tipo_documento ?? 'DOC'}: {item.numero_documento}</Text>
+                <Text variant="caption" color="muted">{tipoDoc ?? 'DOC'}: {item.numero_documento}</Text>
               </View>
             )}
           </View>
         </View>
+
+        {/* Botón toggle */}
+        <TouchableOpacity
+          onPress={() => onToggle(item)}
+          style={{
+            width: 36, height: 36, borderRadius: 10,
+            backgroundColor: activo ? '#FEF2F2' : '#F0FDF4',
+            alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          <Ionicons
+            name={activo ? 'ban-outline' : 'checkmark-circle-outline'}
+            size={20}
+            color={activo ? '#EF4444' : '#16A34A'}
+          />
+        </TouchableOpacity>
       </View>
 
       {item.fecha_registro && (
@@ -96,16 +121,19 @@ function ClienteCard({ item }: { item: Cliente }) {
 export default function ClientesScreen() {
   const router = useRouter();
 
-  const [clientes,   setClientes]   = useState<Cliente[]>([]);
-  const [loading,    setLoading]    = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [loadingMore,setLoadingMore]= useState(false);
-  const [search,     setSearch]     = useState('');
-  const [soloActivos,setSoloActivos]= useState(false);
-  const [page,       setPage]       = useState(1);
-  const [hasMore,    setHasMore]    = useState(true);
-  const [error,      setError]      = useState('');
-  const [total,      setTotal]      = useState(0);
+  const [clientes,      setClientes]      = useState<Cliente[]>([]);
+  const [loading,       setLoading]       = useState(true);
+  const [refreshing,    setRefreshing]    = useState(false);
+  const [loadingMore,   setLoadingMore]   = useState(false);
+  const [search,        setSearch]        = useState('');
+  const [soloActivos,   setSoloActivos]   = useState(false);
+  const [page,          setPage]          = useState(1);
+  const [hasMore,       setHasMore]       = useState(true);
+  const [error,         setError]         = useState('');
+  const [total,         setTotal]         = useState(0);
+
+  const [selectedCliente, setSelectedCliente] = useState<Cliente | null>(null);
+  const [loadingToggle,   setLoadingToggle]    = useState(false);
 
   const fetchClientes = useCallback(async (p = 1, reset = false) => {
     if (p === 1) reset ? setRefreshing(true) : setLoading(true);
@@ -117,7 +145,10 @@ export default function ClientesScreen() {
       if (soloActivos)    url += `&estado=activo`;
 
       const res: any = await apiClient.get(url);
-      const items: Cliente[] = Array.isArray(res?.data)
+      const pagination = res?.data;
+      const items: Cliente[] = Array.isArray(pagination?.data)
+        ? pagination.data
+        : Array.isArray(res?.data)
         ? res.data
         : Array.isArray(res?.clientes)
         ? res.clientes
@@ -125,7 +156,8 @@ export default function ClientesScreen() {
         ? res
         : [];
 
-      if (res?.total) setTotal(res.total);
+      const t = pagination?.total ?? res?.total;
+      if (t) setTotal(t);
       setClientes(prev => p === 1 ? items : [...prev, ...items]);
       setHasMore(items.length === 15);
       setPage(p);
@@ -142,6 +174,27 @@ export default function ClientesScreen() {
 
   const onRefresh  = () => fetchClientes(1, true);
   const onLoadMore = () => { if (hasMore && !loadingMore) fetchClientes(page + 1); };
+
+  const handleToggleConfirm = async () => {
+    if (!selectedCliente) return;
+    setLoadingToggle(true);
+    try {
+      const activo = isActivo(selectedCliente.estado);
+      await apiClient.patch(`/clientes/${selectedCliente.id_cliente}/toggle-estado`, {});
+      setClientes(prev =>
+        prev.map(c =>
+          c.id_cliente === selectedCliente.id_cliente ? { ...c, estado: !activo } : c
+        )
+      );
+      setSelectedCliente(null);
+    } catch {
+      setSelectedCliente(null);
+    } finally {
+      setLoadingToggle(false);
+    }
+  };
+
+  const clienteActivo = selectedCliente ? isActivo(selectedCliente.estado) : false;
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
@@ -202,7 +255,9 @@ export default function ClientesScreen() {
         <FlatList
           data={clientes}
           keyExtractor={item => String(item.id_cliente)}
-          renderItem={({ item }) => <ClienteCard item={item} />}
+          renderItem={({ item }) => (
+            <ClienteCard item={item} onToggle={setSelectedCliente} />
+          )}
           contentContainerStyle={{ padding: 16, paddingBottom: 32 }}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#458EFF" />}
@@ -217,6 +272,24 @@ export default function ClientesScreen() {
           }
         />
       )}
+
+      <ConfirmModal
+        visible={!!selectedCliente}
+        title={clienteActivo ? 'Desactivar cliente' : 'Activar cliente'}
+        message={
+          clienteActivo
+            ? `¿Desactivar a ${selectedCliente?.nombre_completo ?? 'este cliente'}? No podrá iniciar sesión.`
+            : `¿Activar a ${selectedCliente?.nombre_completo ?? 'este cliente'}?`
+        }
+        confirmLabel={clienteActivo ? 'Desactivar' : 'Activar'}
+        confirmVariant={clienteActivo ? 'danger' : 'primary'}
+        iconName={clienteActivo ? 'ban-outline' : 'checkmark-circle-outline'}
+        iconColor={clienteActivo ? '#EF4444' : '#16A34A'}
+        iconBg={clienteActivo ? '#FEF2F2' : '#F0FDF4'}
+        onConfirm={handleToggleConfirm}
+        onCancel={() => setSelectedCliente(null)}
+        loading={loadingToggle}
+      />
     </View>
   );
 }
