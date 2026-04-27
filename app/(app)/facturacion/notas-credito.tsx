@@ -141,25 +141,26 @@ export default function NotasCreditoScreen() {
 
       <SearchBar value={search} onChangeText={setSearch} placeholder="Buscar nota, cliente..." />
 
-      {/* Filtros */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={{ flexGrow: 0 }}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 6, paddingBottom: 8, gap: 8, alignItems: 'center' }}
-      >
-        {ESTADOS.map(e => (
-          <TouchableOpacity
-            key={e.key}
-            onPress={() => applyEstado(e.key)}
-            className={`px-3 py-1.5 rounded-full border ${estado === e.key ? 'bg-azul-oscuro border-azul-oscuro' : 'bg-white border-gray-200'}`}
-          >
-            <Text variant="caption" className={estado === e.key ? 'text-white' : 'text-gray-600'}>
-              {e.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      {/* Filtros de estado */}
+      <View className="mb-2">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
+        >
+          {ESTADOS.map(e => (
+            <TouchableOpacity
+              key={e.key}
+              onPress={() => applyEstado(e.key)}
+              className={`px-3 py-1.5 rounded-full border ${estado === e.key ? 'bg-azul-oscuro border-azul-oscuro' : 'bg-white border-gray-200'}`}
+            >
+              <Text variant="caption" className={estado === e.key ? 'text-white' : 'text-gray-600'}>
+                {e.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
       {error && (
         <Card className="mx-4 mb-2 p-3 border border-red-100">

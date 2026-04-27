@@ -10,8 +10,13 @@ export interface NotaCredito {
   cliente_id: number;
   cliente?: {
     id: number;
-    nombre: string;
-    ruc: string;
+    razon_social?: string;
+    nombre_comercial?: string;
+    ruc?: string;
+  };
+  cliente_info?: {
+    nombre_completo: string;
+    numero_documento: string;
   };
   motivo: string;
   descripcion?: string;

@@ -243,7 +243,9 @@ export default function NuevaNotaCreditoScreen() {
         message={status.message}
         onClose={() => {
           setStatus(prev => ({ ...prev, visible: false }));
-          if (status.type === 'success') router.back();
+          if (status.type === 'success') {
+            router.replace('/facturacion/notas-credito');
+          }
         }}
       />
     </View>

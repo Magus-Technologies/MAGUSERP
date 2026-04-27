@@ -17,11 +17,13 @@ interface NotaCardProps {
     id: number;
     numero: string;
     serie: string;
-    cliente?: { nombre: string };
+    cliente?: { razon_social?: string; nombre_comercial?: string };
+    cliente_info?: { nombre_completo: string; numero_documento: string };
     total: number;
     estado: string;
     fecha_emision: string;
     tipo: 'credito' | 'debito';
+    motivo?: string;
     xml?: string | null;
     pdf?: string | null;
     cdr?: string | null;
@@ -67,12 +69,20 @@ export function NotaCard({ item, onPress, actions }: NotaCardProps) {
         <View className="mb-3 pb-3 border-b border-gray-100">
           <Text variant="caption" className="text-gray-500">Cliente</Text>
           <Text variant="body" className="font-medium mt-1">
-            {item.cliente?.nombre || 'Sin cliente'}
+            {item.cliente_info?.nombre_completo || item.cliente?.razon_social || item.cliente?.nombre_comercial || 'Sin cliente'}
+          </Text>
+        </View>
+
+        {/* Motivo */}
+        <View className="mb-3">
+          <Text variant="caption" className="text-gray-500">Motivo</Text>
+          <Text variant="caption" className="text-gray-700 mt-0.5" numberOfLines={2}>
+            {item.motivo || 'No especificado'}
           </Text>
         </View>
 
         {/* Total + fecha */}
-        <View className="flex-row justify-between items-center">
+        <View className="flex-row justify-between items-center pt-3 border-t border-gray-100">
           <View>
             <Text variant="caption" className="text-gray-500">Total</Text>
             <Text variant="body" className="font-bold text-azul-oscuro mt-1">
