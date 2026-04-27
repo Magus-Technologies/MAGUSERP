@@ -1,6 +1,20 @@
 import { useState, useEffect } from 'react';
 import { apiClient } from '../api/client';
 
+// Catálogo 09 SUNAT — valores fijos, no cambian
+export const MOTIVOS_NOTA_CREDITO = [
+  { codigo: '01', descripcion: 'Anulación de la operación' },
+  { codigo: '02', descripcion: 'Anulación por error en el RUC' },
+  { codigo: '03', descripcion: 'Corrección por error en la descripción' },
+  { codigo: '04', descripcion: 'Descuento global' },
+  { codigo: '05', descripcion: 'Descuento por ítem' },
+  { codigo: '06', descripcion: 'Devolución total' },
+  { codigo: '07', descripcion: 'Devolución por ítem' },
+  { codigo: '08', descripcion: 'Bonificación' },
+  { codigo: '09', descripcion: 'Disminución en el valor' },
+  { codigo: '13', descripcion: 'Otros' },
+];
+
 export interface NotaCreditoItem {
   producto_id: number;
   nombre: string;
@@ -22,11 +36,16 @@ export interface ComprobanteReferencia {
   items: any[];
 }
 
-export function useNotaCreditoForm(onSuccess: () => void) {
+export function useNotaCreditoForm(
+  onSuccess: () => void,
+  initialComprobante?: string,
+  initialTipoNota?: string,
+  initialVentaId?: string,
+) {
   const [comprobanteReferencia, setComprobanteReferencia] = useState<ComprobanteReferencia | null>(null);
-  const [busquedaComprobante, setBusquedaComprobante] = useState('');
+  const [busquedaComprobante, setBusquedaComprobante] = useState(initialComprobante ?? '');
   const [items, setItems] = useState<NotaCreditoItem[]>([]);
-  const [tipoNota, setTipoNota] = useState('01');
+  const [tipoNota, setTipoNota] = useState(initialTipoNota ?? '01');
   const [motivo, setMotivo] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [anulacionTotal, setAnulacionTotal] = useState(false);
@@ -34,8 +53,6 @@ export function useNotaCreditoForm(onSuccess: () => void) {
   const [buscando, setBuscando] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
-  const [motivosNotaCredito, setMotivosNotaCredito] = useState<any[]>([]);
-  const [cargandoMotivos, setCargandoMotivos] = useState(true);
 
   const reset = () => {
     setComprobanteReferencia(null);
@@ -48,44 +65,37 @@ export function useNotaCreditoForm(onSuccess: () => void) {
     setFormError('');
   };
 
-  useEffect(() => {
-    cargarMotivos();
-  }, []);
-
-  const cargarMotivos = async () => {
-    try {
-      const res: any = await apiClient.get('/facturacion/catalogos/principales');
-      if (res?.success && res?.data?.['motivo-nota-credito']) {
-        setMotivosNotaCredito(res.data['motivo-nota-credito']);
-      }
-    } catch (e) {
-      console.error('Error cargando motivos:', e);
-    } finally {
-      setCargandoMotivos(false);
-    }
+  const inicializarItems = (detalles: any[], seleccionarTodo = false) => {
+    setItems(detalles.map(item => ({
+      producto_id:        item.producto_id,
+      nombre:             item.nombre_producto || item.descripcion || item.nombre || '',
+      codigo:             item.codigo_producto || item.codigo || '',
+      cantidad_original:  parseFloat(item.cantidad) || 0,
+      cantidad:           parseFloat(item.cantidad) || 0,
+      precio_unitario:    parseFloat(item.precio_unitario) || 0,
+      descuento:          parseFloat(item.descuento_unitario ?? item.descuento ?? 0),
+      tipo_afectacion_igv: item.tipo_afectacion_igv || '10',
+      seleccionado:       seleccionarTodo,
+    })));
   };
 
-  const buscarComprobante = async () => {
-    if (!busquedaComprobante.trim()) {
-      setFormError('Ingresa el número de comprobante');
-      return;
-    }
-
+  const buscarComprobanteConNumero = async (numero: string, seleccionarTodo = false) => {
     setBuscando(true);
     setFormError('');
     try {
-      const res: any = await apiClient.get(`/facturacion/comprobantes/buscar?numero=${encodeURIComponent(busquedaComprobante)}`);
+      const res: any = await apiClient.get(`/facturacion/comprobantes/buscar?numero=${encodeURIComponent(numero)}`);
       if (res?.success && res?.data) {
         const comp = res.data;
         setComprobanteReferencia({
-          id: comp.id,
-          tipo: comp.tipo_comprobante,
+          id:              comp.id,
+          tipo:            comp.tipo_comprobante,
           numero_completo: comp.numero_completo,
-          cliente_nombre: comp.cliente?.nombre || 'Sin cliente',
-          total: parseFloat(comp.total),
-          items: comp.detalles || []
+          cliente_nombre:  comp.cliente?.nombre || 'Sin cliente',
+          total:           parseFloat(comp.total),
+          items:           comp.detalles || [],
         });
-        inicializarItems(comp.detalles || []);
+        inicializarItems(comp.detalles || [], seleccionarTodo);
+        if (seleccionarTodo) setAnulacionTotal(true);
       } else {
         setFormError(res?.message || 'Comprobante no encontrado');
       }
@@ -96,19 +106,54 @@ export function useNotaCreditoForm(onSuccess: () => void) {
     }
   };
 
-  const inicializarItems = (detalles: any[]) => {
-    setItems(detalles.map(item => ({
-      producto_id: item.producto_id,
-      nombre: item.nombre_producto || item.descripcion,
-      codigo: item.codigo_producto || '',
-      cantidad_original: item.cantidad,
-      cantidad: item.cantidad,
-      precio_unitario: item.precio_unitario,
-      descuento: item.descuento || 0,
-      tipo_afectacion_igv: item.tipo_afectacion_igv || '10',
-      seleccionado: false
-    })));
+  const buscarComprobante = async () => {
+    if (!busquedaComprobante.trim()) {
+      setFormError('Ingresa el número de comprobante');
+      return;
+    }
+    await buscarComprobanteConNumero(busquedaComprobante.trim());
   };
+
+  const cargarDesdeVenta = async (ventaId: string) => {
+    setBuscando(true);
+    setFormError('');
+    try {
+      const res: any = await apiClient.get(`/ventas/${ventaId}`);
+      if (!res?.success || !res?.data) {
+        setFormError('No se pudo cargar la venta');
+        return;
+      }
+      const venta = res.data;
+      const comp  = venta.comprobante_info;
+      if (!comp) {
+        setFormError('Esta venta no tiene comprobante electrónico');
+        return;
+      }
+      setComprobanteReferencia({
+        id:              comp.id,
+        tipo:            comp.tipo_comprobante,
+        numero_completo: comp.numero_completo,
+        cliente_nombre:  venta.cliente_contacto?.nombre_completo ||
+                         venta.cliente_info?.nombre_completo || 'Sin cliente',
+        total:           parseFloat(String(venta.total ?? comp.importe_total ?? 0)),
+        items:           venta.detalles || [],
+      });
+      setBusquedaComprobante(comp.numero_completo);
+      inicializarItems(venta.detalles || [], false);
+    } catch (e: any) {
+      setFormError('Error al cargar la venta');
+    } finally {
+      setBuscando(false);
+    }
+  };
+
+  useEffect(() => {
+    if (initialVentaId) {
+      cargarDesdeVenta(initialVentaId);
+    } else if (initialComprobante?.trim()) {
+      buscarComprobanteConNumero(initialComprobante.trim(), !!initialTipoNota);
+    }
+  }, []);
 
   const toggleItemSeleccion = (idx: number) => {
     setItems(prev => prev.map((i, n) => n === idx ? { ...i, seleccionado: !i.seleccionado } : i));
@@ -180,6 +225,6 @@ export function useNotaCreditoForm(onSuccess: () => void) {
     anulacionTotal, toggleAnulacionTotal,
     calcularTotal,
     saving, formError, save, reset,
-    motivosNotaCredito, cargandoMotivos
+    motivosNotaCredito: MOTIVOS_NOTA_CREDITO, cargandoMotivos: false
   };
 }

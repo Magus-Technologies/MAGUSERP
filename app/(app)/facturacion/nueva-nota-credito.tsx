@@ -7,7 +7,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useNotaCreditoForm } from '../../../src/hooks/useNotaCreditoForm';
 import { Text } from '../../../src/components/ui/Text';
 import { Button } from '../../../src/components/ui/Button';
@@ -18,7 +18,8 @@ import { ScreenHeader } from '../../../src/components/ui/ScreenHeader';
 export default function NuevaNotaCreditoScreen() {
   const router = useRouter();
   const { bottom } = useSafeAreaInsets();
-  const form = useNotaCreditoForm(() => {});
+  const params = useLocalSearchParams<{ ventaId?: string }>();
+  const form = useNotaCreditoForm(() => {}, undefined, undefined, params.ventaId);
 
   const {
     comprobanteReferencia, busquedaComprobante, setBusquedaComprobante,

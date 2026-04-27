@@ -47,6 +47,34 @@ export const facturacionService = {
     return apiClient.post(`/ventas/${id}/facturar`, {});
   },
 
+  enviarSunatVenta(id: number): Promise<any> {
+    return apiClient.post(`/ventas/${id}/enviar-sunat`, {});
+  },
+
+  reenviarSunatVenta(id: number): Promise<any> {
+    return apiClient.post(`/ventas/${id}/reenviar-sunat`, {});
+  },
+
+  consultarSunatVenta(id: number): Promise<any> {
+    return apiClient.post(`/ventas/${id}/consultar-sunat`, {});
+  },
+
+  generarPdfVenta(id: number): Promise<any> {
+    return apiClient.post(`/ventas/${id}/generar-pdf`, {});
+  },
+
+  enviarEmailVenta(id: number, datos: { email?: string }): Promise<any> {
+    return apiClient.post(`/ventas/${id}/email`, datos);
+  },
+
+  enviarWhatsAppVenta(id: number, datos: { telefono: string }): Promise<any> {
+    return apiClient.post(`/ventas/${id}/whatsapp`, datos);
+  },
+
+  anularVenta(id: number, datos: { motivo: string }): Promise<any> {
+    return apiClient.patch(`/ventas/${id}/anular`, datos);
+  },
+
   getCotizaciones(params: CotizacionesParams = {}): Promise<any> {
     const q = new URLSearchParams();
     if (params.search) q.set('search', params.search);
@@ -63,6 +91,26 @@ export const facturacionService = {
     if (params.page)   q.set('page', String(params.page));
     const qs = q.toString();
     return apiClient.get(`/notas-credito${qs ? '?' + qs : ''}`);
+  },
+
+  generarXmlNota(id: number): Promise<any> {
+    return apiClient.post(`/notas-credito/${id}/generar-xml`, {});
+  },
+
+  enviarSunatNota(id: number): Promise<any> {
+    return apiClient.post(`/notas-credito/${id}/enviar-sunat`, {});
+  },
+
+  consultarSunatNota(id: number): Promise<any> {
+    return apiClient.post(`/notas-credito/${id}/consultar-sunat`, {});
+  },
+
+  enviarEmailNota(id: number, datos: { email?: string }): Promise<any> {
+    return apiClient.post(`/notas-credito/${id}/email`, datos);
+  },
+
+  enviarWhatsAppNota(id: number, datos: { telefono: string }): Promise<any> {
+    return apiClient.post(`/notas-credito/${id}/whatsapp`, datos);
   },
 
   getNotasDebito(params: NotasParams = {}): Promise<any> {

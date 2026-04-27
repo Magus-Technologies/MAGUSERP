@@ -93,47 +93,30 @@ export function useVentaForm(onSuccess: () => void) {
       const typeMap: Record<string, string> = { '1': 'DNI', '6': 'RUC', '4': 'CE', '7': 'PASAPORTE' };
       const tipoTxt = typeMap[clienteData.tipo_documento] || 'DNI';
 
-      // 1. Intentar buscar en la base de datos LOCAL primero
-      try {
-        const localRes: any = await apiClient.get(`/utilidades/clientes/buscar?tipo_documento=${tipoTxt}&numero_documento=${doc}`);
-        if (localRes?.success && localRes?.data) {
-          const c = localRes.data;
-          setClienteId(c.id);
-          setClienteData(prev => ({
-            ...prev,
-            razon_social: c.razon_social ?? c.nombre_comercial ?? '',
-            direccion:    c.direccion ?? '',
-            email:        c.email ?? '',
-            telefono:     c.telefono ?? '',
-          }));
-          setSearchingCliente(false);
-          return;
-        }
-      } catch (e) {
-        // No encontrado localmente, continuamos con externos
-      }
-
-      // 2. Si no es local, buscar en externos (SUNAT/RENIEC)
+      // Buscar en RENIEC/SUNAT usando el endpoint unificado
+      const res: any = await apiClient.get(`/reniec/buscar/${doc}`);
       const isRuc = clienteData.tipo_documento === '6';
+
       if (isRuc) {
-        const res: any = await apiClient.post(`/utilidades/validar-ruc/${doc}`);
-        if (res?.success && res?.data) {
+        // Respuesta RUC: { ruc, razonSocial, nombre, estado, condicion, ... }
+        const razonSocial = res?.razonSocial ?? res?.nombre ?? '';
+        if (razonSocial) {
           setClienteData(prev => ({
             ...prev,
-            razon_social: res.data.razon_social ?? '',
-            direccion:    res.data.direccion ?? '',
+            razon_social: razonSocial,
+            direccion:    res?.direccion ?? prev.direccion,
           }));
         } else {
-          setClienteError(res?.message ?? 'RUC no encontrado en SUNAT');
+          setClienteError('RUC no encontrado');
         }
       } else {
-        const res: any = await apiClient.get(`/reniec/buscar/${doc}`);
-        if (res?.success !== false && (res?.nombres || res?.nombre)) {
-          const nombre = res.nombre
-            ?? [res.nombres, res.apellidoPaterno, res.apellidoMaterno].filter(Boolean).join(' ');
+        // Respuesta DNI: { nombres, apellidoPaterno, apellidoMaterno, nombre, ... }
+        const nombre = res?.nombre
+          ?? [res?.nombres, res?.apellidoPaterno, res?.apellidoMaterno].filter(Boolean).join(' ');
+        if (nombre) {
           setClienteData(prev => ({ ...prev, razon_social: nombre }));
         } else {
-          setClienteError(res?.message ?? 'Documento no encontrado');
+          setClienteError('Documento no encontrado');
         }
       }
     } catch (e: any) {

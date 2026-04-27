@@ -18,9 +18,12 @@ export interface NotaCredito {
   subtotal: number;
   igv: number;
   total: number;
-  estado: 'BORRADOR' | 'ENVIADO' | 'ACEPTADO' | 'RECHAZADO';
+  estado: 'pendiente' | 'generado' | 'aceptado' | 'rechazado' | 'anulado';
   fecha_emision: string;
   created_at: string;
+  xml?: string | null;
+  pdf?: string | null;
+  cdr?: string | null;
 }
 
 export function useNotasCredito() {
@@ -57,7 +60,12 @@ export function useNotasCredito() {
         return;
       }
 
-      const list: NotaCredito[] = Array.isArray(raw?.data) ? raw.data : [];
+      const list: NotaCredito[] = (Array.isArray(raw?.data) ? raw.data : []).map((n: any) => ({
+        ...n,
+        subtotal: parseFloat(n.subtotal ?? 0),
+        igv:      parseFloat(n.igv      ?? 0),
+        total:    parseFloat(n.total    ?? 0),
+      }));
       setNotas(prev => (append ? [...prev, ...list] : list));
       setLastPage(raw?.last_page ?? 1);
       setTotal(raw?.total ?? list.length);
