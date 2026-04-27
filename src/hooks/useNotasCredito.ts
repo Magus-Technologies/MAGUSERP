@@ -68,8 +68,8 @@ export function useNotasCredito() {
       const list: NotaCredito[] = (Array.isArray(raw?.data) ? raw.data : []).map((n: any) => ({
         ...n,
         subtotal: parseFloat(n.subtotal ?? 0),
-        igv:      parseFloat(n.igv      ?? 0),
-        total:    parseFloat(n.total    ?? 0),
+        igv: parseFloat(n.igv ?? 0),
+        total: parseFloat(n.total ?? 0),
       }));
       setNotas(prev => (append ? [...prev, ...list] : list));
       setLastPage(raw?.last_page ?? 1);
